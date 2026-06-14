@@ -80,15 +80,16 @@ export default function App() {
   };
 
   return (
-    <div style={{ backgroundColor: COLORS.cream, minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: "'Inter', sans-serif" }}>
+    /* AJUSTADO: width 100vw y margin 0 para romper cualquier centrado del CSS global */
+    <div style={{ backgroundColor: COLORS.cream, minHeight: '100vh', width: '100vw', margin: 0, display: 'flex', flexDirection: 'column', fontFamily: "'Inter', sans-serif" }}>
       
-      {/* HEADER DE LA APLICACIÓN - APUNTANDO EXACTAMENTE A /teresitalogo.png */}
-      <div className="no-print" style={{ backgroundColor: COLORS.brown, height: '70px', display: 'flex', alignItems: 'center', padding: '0 30px' }}>
+      {/* HEADER DE LA APLICACIÓN */}
+      <div className="no-print" style={{ backgroundColor: COLORS.brown, height: '70px', display: 'flex', alignItems: 'center', padding: '0 30px', width: '100%', boxSizing: 'border-box' }}>
         <img src="/teresitalogo.png" alt="Parroquia Santa Teresita del Niño Jesús" style={{ height: '50px', objectFit: 'contain' }} />
       </div>
 
       {/* CONTENIDO PRINCIPAL */}
-      <main style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px 20px' }}>
+      <main style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px 20px', width: '100%', boxSizing: 'border-box' }}>
         
         {screen === 'home' && (
           <div style={{ width: '100%', maxWidth: '850px', textAlign: 'center' }}>
@@ -153,7 +154,7 @@ export default function App() {
       </main>
 
       {/* BARRA INFERIOR */}
-      <div className="no-print" style={{ backgroundColor: COLORS.brown, height: '55px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '40px', color: 'white', fontSize: '12px', borderTop: `1px solid ${COLORS.gold}` }}>
+      <div className="no-print" style={{ backgroundColor: COLORS.brown, minHeight: '55px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '40px', color: 'white', fontSize: '12px', borderTop: `1px solid ${COLORS.gold}`, width: '100%', padding: '10px 20px', boxSizing: 'border-box', textAlign: 'center', flexWrap: 'wrap' }}>
         <div>Herramienta de llenado de certificados — Los archivos PDF se guardan en su computadora</div>
         <div>Sin Internet: Funciona completamente local</div>
       </div>
