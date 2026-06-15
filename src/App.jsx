@@ -9,40 +9,39 @@ const COLORS = {
   cream: '#FAF6F0',
   white: '#FFFFFF',
   textLight: '#8D6E63',
-  border: '#E6DFD5'
+  border: '#E6DFD5',
+  hoverBg: '#FDFBF7'
 };
 
 export default function App() {
   const [screen, setScreen] = useState('home'); 
   const [certType, setCertType] = useState(''); 
   const [formData, setFormData] = useState({});
+  const [hoveredCard, setHoveredCard] = useState(null);
+  const [hoveredDraft, setHoveredDraft] = useState(false);
   const fileInputRef = useRef(null);
 
   const initForm = (type) => {
     setCertType(type);
+    const fechaHoy = new Date().toISOString().split('T')[0];
+    
     setFormData({
-      nombres: '', 
-      fechaSacramento: '', 
-      celebrante: '', 
-      libro: '', 
-      folio: '', 
-      partida: '', 
-      observaciones: '',
-      fechaNacimiento: '', 
-      lugarNacimiento: '', 
-      padre: '', 
-      madre: '', 
+      // Campos generales
+      nombres: '', fechaSacramento: '', celebrante: '', libro: '', folio: '', partida: '', observaciones: '',
       lugarSacramento: 'Parroquia Sta. Teresita del Niño Jesús',
-      novio: '', 
-      novia: '', 
-      padreNovio: '', 
-      madreNovio: '', 
-      padreNovia: '', 
-      madreNovia: '', 
-      padrinos: '',
-      civilPrefectura: '', 
-      civilFecha: '', 
-      civilActa: ''
+      motivo: 'Nulidad Matrimonial',
+      fechaExpedicion: fechaHoy,
+      
+      // Campos específicos de Matrimonio (Esposo)
+      esposoNombre: '', esposoEdad: '', esposoEstadoCivil: 'Soltero', esposoNaturalDe: '', esposoVecinoDe: '', esposoPadre: '', esposoMadre: '',
+      
+      // Campos específicos de Matrimonio (Esposa)
+      esposaNombre: '', esposaEdad: '', esposaEstadoCivil: 'Soltera', esposaNaturalDe: '', esposaVecinaDe: '', esposaPadre: '', esposaMadre: '',
+      
+      // Otros
+      padrino: '', madrina: '', ministro: '',
+      civilActa: '', civilFecha: '', civilMunicipio: 'Iribarren', civilEstado: 'Lara',
+      tecnicoMun: '', tecnicoAnio: new Date().getFullYear().toString()
     });
     setScreen('form');
   };
@@ -55,92 +54,115 @@ export default function App() {
   const handleLoadJson = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
         const parsedData = JSON.parse(event.target.result);
-        if (parsedData.certType && parsedData.formData) {
-          setCertType(parsedData.certType);
-          setFormData(parsedData.formData);
-          setScreen('form');
-        } else {
-          alert('El archivo JSON seleccionado no tiene el formato válido de un certificado.');
-        }
-      } catch (error) {
-        alert('Error al leer el archivo. Asegúrese de que sea un archivo .json válido.');
+        setCertType(parsedData.certType);
+        setFormData(parsedData.formData);
+        setScreen('form');
+      } catch (error) { 
+        alert('Error al leer el archivo .json legislado'); 
       }
     };
     reader.readAsText(file);
     e.target.value = '';
   };
 
-  const triggerFileSelect = () => {
-    fileInputRef.current.click();
-  };
-
   return (
-    /* AJUSTADO: width 100vw y margin 0 para romper cualquier centrado del CSS global */
-    <div style={{ backgroundColor: COLORS.cream, minHeight: '100vh', width: '100vw', margin: 0, display: 'flex', flexDirection: 'column', fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ backgroundColor: COLORS.cream, minHeight: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', fontFamily: "'Inter', sans-serif", margin: 0, overflowX: 'hidden' }}>
       
-      {/* HEADER DE LA APLICACIÓN */}
-      <div className="no-print" style={{ backgroundColor: COLORS.brown, height: '70px', display: 'flex', alignItems: 'center', padding: '0 30px', width: '100%', boxSizing: 'border-box' }}>
-        <img src="/teresitalogo.png" alt="Parroquia Santa Teresita del Niño Jesús" style={{ height: '50px', objectFit: 'contain' }} />
+      {/* HEADER: BANNER INSTITUCIONAL EQUILIBRADO */}
+      <div className="no-print" style={{ backgroundColor: COLORS.brown, height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', width: '100%', boxSizing: 'border-box', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <img src="/teresitalogo.png" alt="Logo" style={{ height: '68px', objectFit: 'contain' }} />
+          <div style={{ width: '1px', height: '30px', backgroundColor: COLORS.gold, opacity: 0.5 }}></div>
+          <span style={{ fontFamily: "'Georgia', serif", fontSize: '16px', color: COLORS.cream, letterSpacing: '0.5px' }}>
+            Parroquia Santa Teresita del Niño Jesús
+          </span>
+        </div>
+        <span style={{ fontSize: '11px', color: COLORS.gold, letterSpacing: '1px', fontWeight: 'bold' }}>
+          SISTEMA DE REGISTRO ECLESIÁSTICO
+        </span>
       </div>
 
       {/* CONTENIDO PRINCIPAL */}
       <main style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px 20px', width: '100%', boxSizing: 'border-box' }}>
-        
         {screen === 'home' && (
           <div style={{ width: '100%', maxWidth: '850px', textAlign: 'center' }}>
-            <h1 style={{ fontFamily: "'Georgia', serif", fontSize: '36px', color: COLORS.brown, fontWeight: 'normal', marginBottom: '8px' }}>Bienvenido</h1>
-            <p style={{ color: COLORS.textLight, fontSize: '15px', marginBottom: '35px' }}>Seleccione el certificado que desea emitir</p>
+            <h1 style={{ fontFamily: "'Georgia', serif", fontSize: '38px', color: COLORS.brown, fontWeight: 'normal', marginBottom: '10px', letterSpacing: '-0.5px' }}>
+              Registro Parroquial
+            </h1>
+            <p style={{ color: COLORS.textLight, fontSize: '15px', marginBottom: '40px' }}>
+              Seleccione el tipo de documento eclesiástico que desea emitir o cargar
+            </p>
 
-            {/* GRILLA DE CATEGORÍAS */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '25px' }}>
+            {/* REJILLA DE CERTIFICADOS CON MANEJO DE HOVER DINÁMICO */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '30px' }}>
               
-              <button onClick={() => initForm('bautizo')} style={cardStyle}>
-                <FileText size={45} color={COLORS.gold} strokeWidth={1.2} />
+              <button 
+                onClick={() => initForm('bautizo')} 
+                onMouseEnter={() => setHoveredCard('bautizo')}
+                onMouseLeave={() => setHoveredCard(null)}
+                style={getCardStyle(hoveredCard === 'bautizo')}
+              >
+                <FileText size={48} color={COLORS.gold} strokeWidth={1.1} /> 
                 CERTIFICADO DE BAUTIZO
               </button>
 
-              <button onClick={() => initForm('comunion')} style={cardStyle}>
-                <Award size={45} color={COLORS.gold} strokeWidth={1.2} />
+              <button 
+                onClick={() => initForm('comunion')} 
+                onMouseEnter={() => setHoveredCard('comunion')}
+                onMouseLeave={() => setHoveredCard(null)}
+                style={getCardStyle(hoveredCard === 'comunion')}
+              >
+                <Award size={48} color={COLORS.gold} strokeWidth={1.1} /> 
                 CERTIFICADO DE PRIMERA COMUNIÓN
               </button>
 
-              <button onClick={() => initForm('confirmacion')} style={cardStyle}>
-                <Heart size={45} color={COLORS.gold} strokeWidth={1.2} />
+              <button 
+                onClick={() => initForm('confirmacion')} 
+                onMouseEnter={() => setHoveredCard('confirmacion')}
+                onMouseLeave={() => setHoveredCard(null)}
+                style={getCardStyle(hoveredCard === 'confirmacion')}
+              >
+                <Heart size={48} color={COLORS.gold} strokeWidth={1.1} /> 
                 CERTIFICADO DE CONFIRMACIÓN
               </button>
 
-              <button onClick={() => initForm('matrimonio')} style={cardStyle}>
-                <CheckCircle size={45} color={COLORS.gold} strokeWidth={1.2} />
+              <button 
+                onClick={() => initForm('matrimonio')} 
+                onMouseEnter={() => setHoveredCard('matrimonio')}
+                onMouseLeave={() => setHoveredCard(null)}
+                style={getCardStyle(hoveredCard === 'matrimonio')}
+              >
+                <CheckCircle size={48} color={COLORS.gold} strokeWidth={1.1} /> 
                 CERTIFICADO DE MATRIMONIO
               </button>
 
             </div>
 
-            {/* INTERFAZ DE CARGA LOCAL */}
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              onChange={handleLoadJson} 
-              accept=".json" 
-              style={{ display: 'none' }} 
-            />
-
-            <button onClick={triggerFileSelect} style={buttonBorradorStyle}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                <FolderOpen size={22} color={COLORS.gold} strokeWidth={1.5} />
+            {/* SECCIÓN CARGAR ARCHIVO / BORRADOR */}
+            <input type="file" ref={fileInputRef} onChange={handleLoadJson} accept=".json" style={{ display: 'none' }} />
+            <button 
+              onClick={() => fileInputRef.current.click()}
+              onMouseEnter={() => setHoveredDraft(true)}
+              onMouseLeave={() => setHoveredDraft(false)}
+              style={getDraftButtonStyle(hoveredDraft)}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+                <FolderOpen size={24} color={COLORS.gold} strokeWidth={1.3} />
                 <div style={{ textAlign: 'left' }}>
-                  <span style={{ display: 'block', fontSize: '14px', fontWeight: 'bold', color: COLORS.brown, letterSpacing: '0.5px' }}>ABRIR BORRADOR GUARDADO</span>
-                  <span style={{ fontSize: '12px', color: COLORS.textLight }}>Seleccione un archivo .json previamente guardado</span>
+                  <span style={{ display: 'block', fontSize: '14px', fontWeight: 'bold', color: COLORS.brown, marginBottom: '2px' }}>
+                    ABRIR BORRADOR GUARDADO
+                  </span>
+                  <span style={{ fontSize: '12px', color: COLORS.textLight }}>
+                    Importar archivo de respaldo anterior (.json) desde el almacenamiento
+                  </span>
                 </div>
               </div>
-              <ChevronRight size={18} color={COLORS.gold} />
+              <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredDraft ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
             </button>
-
           </div>
         )}
 
@@ -153,48 +175,58 @@ export default function App() {
         )}
       </main>
 
-      {/* BARRA INFERIOR */}
-      <div className="no-print" style={{ backgroundColor: COLORS.brown, minHeight: '55px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '40px', color: 'white', fontSize: '12px', borderTop: `1px solid ${COLORS.gold}`, width: '100%', padding: '10px 20px', boxSizing: 'border-box', textAlign: 'center', flexWrap: 'wrap' }}>
-        <div>Herramienta de llenado de certificados — Los archivos PDF se guardan en su computadora</div>
-        <div>Sin Internet: Funciona completamente local</div>
+      {/* FOOTER CON INFORMACIÓN TÉCNICA LOCAL */}
+      <div className="no-print" style={{ backgroundColor: COLORS.brown, minHeight: '55px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', color: 'rgba(255,255,255,0.70)', fontSize: '12px', borderTop: `1px solid ${COLORS.gold}`, width: '100%', boxSizing: 'border-box' }}>
+        <div>Herramienta de Digitalización de Certificados Parroquiales — Santa Teresita</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: '7px', height: '7px', backgroundColor: '#4CAF50', borderRadius: '50%' }}></div>
+          <span>Entorno Local Asegurado (Sin Internet)</span>
+        </div>
       </div>
 
       <style>{`
-        @media print {
-          .no-print { display: none !important; }
-          body { background: white !important; }
+        @media print { 
+          .no-print { display: none !important; } 
+          body { background: white !important; } 
         }
       `}</style>
     </div>
   );
 }
 
-const cardStyle = {
+// FUNCIONES DINÁMICAS DE ESTILOS PARA GESTIONAR EL HOVER SIN DEPENDER DE CSS EXTERNO
+const getCardStyle = (isHovered) => ({
   backgroundColor: '#FFFFFF',
-  border: '1px solid #E6DFD5',
-  borderRadius: '10px',
-  padding: '40px 20px',
+  border: `1px solid ${COLORS.border}`,
+  borderRadius: '12px',
+  padding: '45px 25px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '18px',
+  gap: '20px',
   cursor: 'pointer',
-  fontSize: '13px',
+  fontSize: '13.5px',
   fontWeight: 'bold',
-  color: '#603828',
-  letterSpacing: '0.5px',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.01)'
-};
+  color: COLORS.brown,
+  letterSpacing: '0.6px',
+  boxShadow: isHovered ? '0 5px 15px rgba(96, 56, 40, 0.08)' : '0 2px 4px rgba(0,0,0,0.02)',
+  transform: isHovered ? 'translateY(-2px)' : 'none',
+  backgroundColor: isHovered ? COLORS.hoverBg : '#FFFFFF',
+  transition: 'all 0.25s ease',
+  outline: 'none'
+});
 
-const buttonBorradorStyle = {
+const getDraftButtonStyle = (isHovered) => ({
   width: '100%',
-  backgroundColor: '#FFFFFF',
-  border: '1px solid #E6DFD5',
-  borderRadius: '10px',
-  padding: '20px 25px',
+  backgroundColor: isHovered ? COLORS.hoverBg : '#FFFFFF',
+  border: `1px solid ${COLORS.border}`,
+  borderRadius: '12px',
+  padding: '22px 28px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
   cursor: 'pointer',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.01)'
-};
+  boxShadow: isHovered ? '0 4px 12px rgba(96, 56, 40, 0.05)' : 'none',
+  transition: 'all 0.2s ease',
+  outline: 'none'
+});
