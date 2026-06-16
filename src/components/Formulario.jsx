@@ -128,7 +128,7 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
           <Input label="Motivo de Emisión" name="motivo" value={formData.motivo || ''} onChange={onChange} />
         </div>
 
-        {/* ARCHIVO Y REGISTRO ECLESIÁSTICO */}
+        {/* ARCHIVO Y REGISTRO ECLESIÁSTICO + CIVIL */}
         <div style={gridSection}>
           <h3 style={sectionTitle}>COLUMNA TÉCNICA (ARCHIVOS)</h3>
           <div style={row}>
@@ -138,12 +138,13 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
             <Input label="Año" name="tecnicoAnio" value={formData.tecnicoAnio || ''} onChange={onChange} />
           </div>
           
-          {/* SECCIÓN CIVIL VISIBLE COMPLETA: Solo para Bautizos y Matrimonios */}
+          {/* SECCIÓN CIVIL ORDENADA: N°, Fecha, Folio, Certificado */}
           {requiereRegistroCivil && (
             <>
               <div style={row}>
-                <Input label="Inscripción Civil N°" name="civilActa" value={formData.civilActa || ''} onChange={onChange} />
+                <Input label="Inscripción Civil N° (Acta)" name="civilActa" value={formData.civilActa || ''} onChange={onChange} />
                 <Input label="Fecha Inscripción Civil" type="date" name="civilFecha" value={formData.civilFecha || ''} onChange={onChange} />
+                <Input label="Folio Civil" name="civilFolio" value={formData.civilFolio || ''} onChange={onChange} />
                 <Input label={esBautizo ? "Certificado N°" : "Municipio / Prefectura"} name="civilMunicipio" value={formData.civilMunicipio || ''} onChange={onChange} />
               </div>
               <div style={row}>
