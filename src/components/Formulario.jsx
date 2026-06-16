@@ -21,8 +21,8 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
   const esComunion = certType === 'comunion';
   const esConfirmacion = certType === 'confirmacion';
   
-  // Para simplificar condiciones de formatos limpios (Comunión y Confirmación)
-  const esFormatoLimpio = esComunion || esConfirmacion;
+  // Condicional para saber si el sacramento requiere papeleo civil
+  const requiereRegistroCivil = esBautizo || esMatrimonio;
 
   const obtenerTituloSacramento = () => {
     if (esBautizo) return 'DATOS: BAUTIZO';
@@ -128,7 +128,7 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
           <Input label="Motivo de Emisión" name="motivo" value={formData.motivo || ''} onChange={onChange} />
         </div>
 
-        {/* ARCHIVO Y REGISTRO */}
+        {/* ARCHIVO Y REGISTRO ECLESIÁSTICO */}
         <div style={gridSection}>
           <h3 style={sectionTitle}>COLUMNA TÉCNICA (ARCHIVOS)</h3>
           <div style={row}>
@@ -138,14 +138,19 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
             <Input label="Año" name="tecnicoAnio" value={formData.tecnicoAnio || ''} onChange={onChange} />
           </div>
           
-          {/* Ocultamos los datos civiles si es comunión o confirmación */}
-          {!esFormatoLimpio && (
-            <div style={row}>
-              <Input label="Inscripción Civil N°" name="civilActa" value={formData.civilActa || ''} onChange={onChange} />
-              <Input label="Fecha Inscripción Civil" type="date" name="civilFecha" value={formData.civilFecha || ''} onChange={onChange} />
-              <Input label={esBautizo ? "Certificado N°" : "Municipio / Prefectura"} name="civilMunicipio" value={formData.civilMunicipio || ''} onChange={onChange} />
-              <Input label="Estado" name="civilEstado" value={formData.civilEstado || ''} onChange={onChange} />
-            </div>
+          {/* SECCIÓN CIVIL VISIBLE COMPLETA: Solo para Bautizos y Matrimonios */}
+          {requiereRegistroCivil && (
+            <>
+              <div style={row}>
+                <Input label="Inscripción Civil N°" name="civilActa" value={formData.civilActa || ''} onChange={onChange} />
+                <Input label="Fecha Inscripción Civil" type="date" name="civilFecha" value={formData.civilFecha || ''} onChange={onChange} />
+                <Input label={esBautizo ? "Certificado N°" : "Municipio / Prefectura"} name="civilMunicipio" value={formData.civilMunicipio || ''} onChange={onChange} />
+              </div>
+              <div style={row}>
+                <Input label="Registro Civil (Nombre de Oficina)" name="civilNombreRegistro" value={formData.civilNombreRegistro || ''} onChange={onChange} placeholder="Ej: Municipio Iribarren o Prefectura..." />
+                <Input label="Estado" name="civilEstado" value={formData.civilEstado || ''} onChange={onChange} />
+              </div>
+            </>
           )}
         </div>
 
@@ -153,12 +158,12 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
           <h3 style={sectionTitle}>FECHA DE EXPEDICIÓN</h3>
           <div style={row}>
             <Input label="Se imprimirá con fecha de:" type="date" name="fechaExpedicion" value={formData.fechaExpedicion || ''} onChange={onChange} />
-            {esFormatoLimpio && <Input label="Lugar de Expedición" name="lugarExpedicion" value={formData.lugarExpedicion || 'Cabudare'} onChange={onChange} />}
+            {(!requiereRegistroCivil) && <Input label="Lugar de Expedición" name="lugarExpedicion" value={formData.lugarExpedicion || 'Cabudare'} onChange={onChange} />}
           </div>
         </div>
 
-        {/* NOTA MARGINAL (Oculta para formatos limpios) */}
-        {!esFormatoLimpio && (
+        {/* NOTA MARGINAL */}
+        {!requiereRegistroCivil ? null : (
           <div style={gridSection}>
             <h3 style={sectionTitle}>NOTA MARGINAL</h3>
             <textarea name="observaciones" value={formData.observaciones || ''} onChange={onChange} style={textArea} />
@@ -179,11 +184,11 @@ const sectionTitle = { fontSize: '11px', fontWeight: 'bold', color: '#8D6E63', m
 const row = { display: 'flex', gap: '15px' };
 const textArea = { width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #E6DFD5', backgroundColor: '#FAF6F0', color: '#603828', minHeight: '80px', fontFamily: 'inherit' };
 
-function Input({ label, value, onChange, name, type = "text" }) {
+function Input({ label, value, onChange, name, type = "text", placeholder = "" }) {
   return (
     <div style={{ flex: 1 }}>
       <label style={{ display: 'block', fontSize: '11px', color: '#603828', marginBottom: '4px' }}>{label}</label>
-      <input type={type} name={name} value={value} onChange={onChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #E6DFD5', backgroundColor: '#FAF6F0', color: '#603828', outline: 'none', boxSizing: 'border-box' }} />
+      <input type={type} name={name} value={value} onChange={onChange} placeholder={placeholder} style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #E6DFD5', backgroundColor: '#FAF6F0', color: '#603828', outline: 'none', boxSizing: 'border-box' }} />
     </div>
   );
 }

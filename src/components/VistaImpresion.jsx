@@ -159,7 +159,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
             )}
             <span style={{ fontWeight: 'bold' }}>MINISTRO:</span> <b>{formData.ministro || '________________________________________'}</b>.
             <br /><br />
-            Se expide el presente certificado, a solicitud de parte interesada, para fines única y exclusivamente: <span style={{ fontWeight: 'bold' }}>{(formData.motivo || 'Fines Legales').toUpperCase()}</span>.
+            Se expide el presente certificado, a solicitud de parte interesada, para fines única y exclusivamente: <span style={{ fontWeight: 'bold' }}>{(formData.motivo || '').toUpperCase()}</span>.
           </div>
 
           {/* COLUMNA DERECHA SELECTIVA */}
@@ -211,7 +211,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                     REGISTRO CIVIL
                   </div>
                   <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
-                    {formData.civilNombreRegistro || 'Municipio Iribarren'}
+                    {formData.civilNombreRegistro || ''}
                   </div>
                   
                   {esMatrimonio && (
@@ -220,7 +220,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                         MUNICIPIO
                       </div>
                       <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
-                        {formData.civilMunicipio || 'Iribarren'}
+                        {formData.civilMunicipio || ''}
                       </div>
                     </>
                   )}
@@ -229,7 +229,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                     ESTADO
                   </div>
                   <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
-                    {formData.civilEstado || 'Lara'}
+                    {formData.civilEstado || ''}
                   </div>
                 </div>
 

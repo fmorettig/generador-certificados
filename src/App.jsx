@@ -40,7 +40,7 @@ export default function App() {
       
       // Otros
       padrino: '', madrina: '', ministro: '',
-      civilActa: '', civilFecha: '', civilMunicipio: '', civilEstado: 'Lara',
+      civilActa: '', civilFecha: '', civilMunicipio: '', civilEstado: '',
       tecnicoMun: '', tecnicoAnio: new Date().getFullYear().toString()
     });
     setScreen('form');
