@@ -10,14 +10,17 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    const nombre = (formData.esposoNombre || formData.nombres || 'Borrador').replace(/\s+/g, '_');
+    const nombre = (formData.esposoNombre || formData.bautizadoNombre || 'Borrador').replace(/\s+/g, '_');
     link.download = `${certType.toUpperCase()}_${nombre}.json`;
     link.click();
     URL.revokeObjectURL(url);
   };
 
+  const esMatrimonio = certType === 'matrimonio';
+  const esBautizo = certType === 'bautizo';
+
   const obtenerTituloSacramento = () => {
-    if (certType === 'bautizo') return 'DATOS: BAUTIZO';
+    if (esBautizo) return 'DATOS: BAUTIZO';
     if (certType === 'comunion') return 'DATOS: PRIMERA COMUNIÓN';
     if (certType === 'confirmacion') return 'DATOS: CONFIRMACIÓN';
     return 'DATOS: MATRIMONIO';
@@ -35,82 +38,107 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
         
-        {/* SECCIÓN ESPOSO / TITULAR */}
-        <div style={gridSection}>
-          <h3 style={sectionTitle}>{certType === 'matrimonio' ? 'DATOS DEL ESPOSO' : 'DATOS DEL PRESENTADO / TITULAR'}</h3>
-          <Input label="Nombre completo" name="esposoNombre" value={formData.esposoNombre} onChange={onChange} />
-          <div style={row}>
-            <Input label="Estado Civil / Condición" name="esposoEstadoCivil" value={formData.esposoEstadoCivil} onChange={onChange} />
-            <Input label="Edad" name="esposoEdad" value={formData.esposoEdad} onChange={onChange} />
-          </div>
-          <div style={row}>
-            <Input label="Natural de (Origen)" name="esposoNaturalDe" value={formData.esposoNaturalDe} onChange={onChange} />
-            <Input label="Vecino de (Dirección)" name="esposoVecinoDe" value={formData.esposoVecinoDe} onChange={onChange} />
-          </div>
-          <div style={row}>
-            <Input label="Hijo de (Padre)" name="esposoPadre" value={formData.esposoPadre} onChange={onChange} />
-            <Input label="Y de (Madre)" name="esposoMadre" value={formData.esposoMadre} onChange={onChange} />
-          </div>
-        </div>
+        {/* CONDICIONAL DE CAMPOS DE PERSONAS */}
+        {esMatrimonio ? (
+          <>
+            {/* SECCIÓN ESPOSO (SOLO MATRIMONIO) */}
+            <div style={gridSection}>
+              <h3 style={sectionTitle}>DATOS DEL ESPOSO</h3>
+              <Input label="Nombre completo" name="esposoNombre" value={formData.esposoNombre || ''} onChange={onChange} />
+              <div style={row}>
+                <Input label="Estado Civil" name="esposoEstadoCivil" value={formData.esposoEstadoCivil || ''} onChange={onChange} />
+                <Input label="Edad" name="esposoEdad" value={formData.esposoEdad || ''} onChange={onChange} />
+              </div>
+              <div style={row}>
+                <Input label="Natural de (Origen)" name="esposoNaturalDe" value={formData.esposoNaturalDe || ''} onChange={onChange} />
+                <Input label="Vecino de (Dirección)" name="esposoVecinoDe" value={formData.esposoVecinoDe || ''} onChange={onChange} />
+              </div>
+              <div style={row}>
+                <Input label="Hijo de (Padre)" name="esposoPadre" value={formData.esposoPadre || ''} onChange={onChange} />
+                <Input label="Y de (Madre)" name="esposoMadre" value={formData.esposoMadre || ''} onChange={onChange} />
+              </div>
+            </div>
 
-        {/* SECCIÓN ESPOSA (Se mantiene visible o editable por si acaso, usando tus nombres de variables originales) */}
-        <div style={gridSection}>
-          <h3 style={sectionTitle}>{certType === 'matrimonio' ? 'DATOS DE LA ESPOSA' : 'DATOS ADICIONALES / MADRE (SI APLICA)'}</h3>
-          <Input label="Nombre completo" name="esposaNombre" value={formData.esposaNombre} onChange={onChange} />
-          <div style={row}>
-            <Input label="Estado Civil" name="esposaEstadoCivil" value={formData.esposaEstadoCivil} onChange={onChange} />
-            <Input label="Edad" name="esposaEdad" value={formData.esposaEdad} onChange={onChange} />
+            {/* SECCIÓN ESPOSA (SOLO MATRIMONIO) */}
+            <div style={gridSection}>
+              <h3 style={sectionTitle}>DATOS DE LA ESPOSA</h3>
+              <Input label="Nombre completo" name="esposaNombre" value={formData.esposaNombre || ''} onChange={onChange} />
+              <div style={row}>
+                <Input label="Estado Civil" name="esposaEstadoCivil" value={formData.esposaEstadoCivil || ''} onChange={onChange} />
+                <Input label="Edad" name="esposaEdad" value={formData.esposaEdad || ''} onChange={onChange} />
+              </div>
+              <div style={row}>
+                <Input label="Natural de" name="esposaNaturalDe" value={formData.esposaNaturalDe || ''} onChange={onChange} />
+                <Input label="Vecina de" name="esposaVecinaDe" value={formData.esposaVecinaDe || ''} onChange={onChange} />
+              </div>
+              <div style={row}>
+                <Input label="Hija de (Padre)" name="esposaPadre" value={formData.esposaPadre || ''} onChange={onChange} />
+                <Input label="Y de (Madre)" name="esposaMadre" value={formData.esposaMadre || ''} onChange={onChange} />
+              </div>
+            </div>
+          </>
+        ) : (
+          /* SECCIÓN PARA BAUTIZO Y INDIVIDULES */
+          <div style={gridSection}>
+            <h3 style={sectionTitle}>DATOS DEL BAUTIZADO / TITULAR</h3>
+            <Input label="Nombre completo" name="bautizadoNombre" value={formData.bautizadoNombre || ''} onChange={onChange} />
+            <div style={row}>
+              <Input label="Lugar de Nacimiento (Ciudad, Estado)" name="bautizadoLugarNac" value={formData.bautizadoLugarNac || ''} onChange={onChange} />
+              <Input label="Fecha de Nacimiento" type="date" name="bautizadoFechaNac" value={formData.bautizadoFechaNac || ''} onChange={onChange} />
+            </div>
+            <div style={row}>
+              <Input label="Hijo de (Padre)" name="esposoPadre" value={formData.esposoPadre || ''} onChange={onChange} />
+              <Input label="Y de (Madre)" name="esposoMadre" value={formData.esposoMadre || ''} onChange={onChange} />
+            </div>
           </div>
-          <div style={row}>
-            <Input label="Natural de" name="esposaNaturalDe" value={formData.esposaNaturalDe} onChange={onChange} />
-            <Input label="Vecina de" name="esposaVecinaDe" value={formData.esposaVecinaDe} onChange={onChange} />
-          </div>
-          <div style={row}>
-            <Input label="Hija de (Padre)" name="esposaPadre" value={formData.esposaPadre} onChange={onChange} />
-            <Input label="Y de (Madre)" name="esposaMadre" value={formData.esposaMadre} onChange={onChange} />
-          </div>
-        </div>
+        )}
 
         {/* SACRAMENTO Y MINISTROS */}
         <div style={gridSection}>
           <h3 style={sectionTitle}>CELEBRACIÓN Y TESTIGOS</h3>
           <div style={row}>
-            <Input label="Fecha del Sacramento" type="date" name="fechaSacramento" value={formData.fechaSacramento} onChange={onChange} />
-            <Input label="Ministro (Quien ejerció)" name="ministro" value={formData.ministro} onChange={onChange} />
+            <Input 
+              label={esMatrimonio ? "Fecha del Matrimonio" : "Fecha del Bautizo / Sacramento"} 
+              type="date" 
+              name="fechaSacramento" 
+              value={formData.fechaSacramento || ''} 
+              onChange={onChange} 
+            />
+            <Input label="Ministro (Quien ejerció)" name="ministro" value={formData.ministro || ''} onChange={onChange} />
           </div>
           <div style={row}>
-            <Input label="Padrino" name="padrino" value={formData.padrino} onChange={onChange} />
-            <Input label="Madrina" name="madrina" value={formData.madrina} onChange={onChange} />
+            <Input label="Padrino" name="padrino" value={formData.padrino || ''} onChange={onChange} />
+            <Input label="Madrina" name="madrina" value={formData.madrina || ''} onChange={onChange} />
           </div>
-          <Input label="Motivo de Emisión" name="motivo" value={formData.motivo} onChange={onChange} />
+          <Input label="Motivo de Emisión" name="motivo" value={formData.motivo || ''} onChange={onChange} />
         </div>
 
-        {/* ARCHIVO Y REGISTRO (CON TODO TU DISEÑO ORIGINAL) */}
+        {/* ARCHIVO Y REGISTRO */}
         <div style={gridSection}>
           <h3 style={sectionTitle}>COLUMNA TÉCNICA (ARCHIVOS)</h3>
           <div style={row}>
-            <Input label="Libro" name="libro" value={formData.libro} onChange={onChange} />
-            <Input label="Folio" name="folio" value={formData.folio} onChange={onChange} />
-            <Input label="Mun (N°)" name="tecnicoMun" value={formData.tecnicoMun} onChange={onChange} />
-            <Input label="Año" name="tecnicoAnio" value={formData.tecnicoAnio} onChange={onChange} />
+            <Input label="Libro" name="libro" value={formData.libro || ''} onChange={onChange} />
+            <Input label="Folio" name="folio" value={formData.folio || ''} onChange={onChange} />
+            <Input label="Mun / Partida (N°)" name="tecnicoMun" value={formData.tecnicoMun || ''} onChange={onChange} />
+            <Input label="Año" name="tecnicoAnio" value={formData.tecnicoAnio || ''} onChange={onChange} />
           </div>
           <div style={row}>
-            <Input label="Registro Civil N°" name="civilActa" value={formData.civilActa} onChange={onChange} />
-            <Input label="Fecha Civil" type="date" name="civilFecha" value={formData.civilFecha} onChange={onChange} />
-            <Input label="Municipio" name="civilMunicipio" value={formData.civilMunicipio} onChange={onChange} />
-            <Input label="Estado" name="civilEstado" value={formData.civilEstado} onChange={onChange} />
+            <Input label="Inscripción Civil N°" name="civilActa" value={formData.civilActa || ''} onChange={onChange} />
+            <Input label="Fecha Inscripción Civil" type="date" name="civilFecha" value={formData.civilFecha || ''} onChange={onChange} />
+            <Input label={esBautizo ? "Certificado N°" : "Municipio / Prefectura"} name="civilMunicipio" value={formData.civilMunicipio || ''} onChange={onChange} />
+            <Input label="Estado" name="civilEstado" value={formData.civilEstado || ''} onChange={onChange} />
           </div>
         </div>
 
         <div style={gridSection}>
           <h3 style={sectionTitle}>FECHA DE EXPEDICIÓN</h3>
-          <Input label="Se imprimirá con fecha de:" type="date" name="fechaExpedicion" value={formData.fechaExpedicion} onChange={onChange} />
+          <Input label="Se imprimirá con fecha de:" type="date" name="fechaExpedicion" value={formData.fechaExpedicion || ''} onChange={onChange} />
         </div>
 
         {/* OBSERVACIONES */}
         <div style={gridSection}>
           <h3 style={sectionTitle}>NOTA MARGINAL</h3>
-          <textarea name="observaciones" value={formData.observaciones} onChange={onChange} style={textArea} />
+          <textarea name="observaciones" value={formData.observaciones || ''} onChange={onChange} style={textArea} />
         </div>
 
         <div style={{ display: 'flex', gap: '15px' }}>
