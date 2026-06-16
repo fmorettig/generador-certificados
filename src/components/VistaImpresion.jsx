@@ -117,21 +117,32 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                 </div>
                 De <b>{formData.bautizadoEdad || '___ años'}</b> de edad, recibió el Sacramento de la Eucaristía el día <b>{formatearFecha(formData.fechaSacramento)}</b>.
                 <br /><br />
-                <span style={{ fontWeight: 'bold' }}>PADRES:</span> <b>{formData.esposoPadre || '________________________________________'}</b>
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{formData.esposoMadre || '________________________________________'}</b>
+                
+                {/* ALINEACIÓN DE PADRES */}
+                <div style={{ display: 'flex', marginTop: '5px' }}>
+                  <span style={{ fontWeight: 'bold', width: '85px', flexShrink: 0 }}>PADRES:</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <b>{formData.esposoPadre || '________________________________________'}</b>
+                    <b>{formData.esposoMadre || '________________________________________'}</b>
+                  </div>
+                </div>
               </>
             ) : esConfirmacion ? (
-              /* FORMATO CORREGIDO EXACTO PARA CONFIRMACIÓN */
               <>
                 <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '14px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
                   {formData.bautizadoNombre ? formData.bautizadoNombre.toUpperCase() : '________________________________________'}
                 </div>
                 De <b>{formData.bautizadoEdad || '___ años'}</b> de edad, recibió el Sacramento de la Confirmación el día <b>{formatearFecha(formData.fechaSacramento)}</b>.
                 <br /><br />
-                <span style={{ fontWeight: 'bold' }}>PADRES:</span> <b>{formData.esposoPadre || '________________________________________'}</b>
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{formData.esposoMadre || '________________________________________'}</b>
+                
+                {/* ALINEACIÓN DE PADRES */}
+                <div style={{ display: 'flex', marginTop: '5px' }}>
+                  <span style={{ fontWeight: 'bold', width: '85px', flexShrink: 0 }}>PADRES:</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <b>{formData.esposoPadre || '________________________________________'}</b>
+                    <b>{formData.esposoMadre || '________________________________________'}</b>
+                  </div>
+                </div>
               </>
             ) : (
               <>
@@ -142,21 +153,31 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                 <br />
                 Nació en <b>{formData.bautizadoLugarNac || '____________________'}</b>, el día: <b>{formatearFecha(formData.bautizadoFechaNac)}</b>.
                 <br /><br />
-                <span style={{ fontWeight: 'bold' }}>PADRES:</span> <b>{formData.esposoPadre || '________________________________________'}</b>
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{formData.esposoMadre || '________________________________________'}</b>
+                
+                {/* ALINEACIÓN DE PADRES */}
+                <div style={{ display: 'flex', marginTop: '5px' }}>
+                  <span style={{ fontWeight: 'bold', width: '85px', flexShrink: 0 }}>PADRES:</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <b>{formData.esposoPadre || '________________________________________'}</b>
+                    <b>{formData.esposoMadre || '________________________________________'}</b>
+                  </div>
+                </div>
               </>
             )}
             
             <br />
+            
+            {/* ALINEACIÓN DE PADRINOS (PARA BAUTIZO Y CONFIRMACIÓN) */}
             {!esComunion && (
-              <>
-                <span style={{ fontWeight: 'bold' }}>PADRINOS:</span> <b>{formData.padrino || '________________________________________'}</b>
-                <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{formData.madrina || '________________________________________'}</b>
-                <br />
-              </>
+              <div style={{ display: 'flex', marginBottom: '15px' }}>
+                <span style={{ fontWeight: 'bold', width: '85px', flexShrink: 0 }}>PADRINOS:</span>
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <b>{formData.padrino || '________________________________________'}</b>
+                  <b>{formData.madrina || '________________________________________'}</b>
+                </div>
+              </div>
             )}
+
             <span style={{ fontWeight: 'bold' }}>MINISTRO:</span> <b>{formData.ministro || '________________________________________'}</b>.
             <br /><br />
             Se expide el presente certificado, a solicitud de parte interesada, para fines única y exclusivamente: <span style={{ fontWeight: 'bold' }}>{(formData.motivo || '').toUpperCase()}</span>.
