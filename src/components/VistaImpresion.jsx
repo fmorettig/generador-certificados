@@ -167,7 +167,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
             
             <br />
             
-            {/* ALINEACIÓN DE PADRINOS */}
+            {/* ALINEACIÓN DE PADRINOS (PARA BAUTIZO Y CONFIRMACIÓN) */}
             {!esComunion && (
               <div style={{ display: 'flex', marginBottom: '15px' }}>
                 <span style={{ fontWeight: 'bold', width: '85px', flexShrink: 0 }}>PADRINOS:</span>
@@ -223,8 +223,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                     INSCRIPCION CIVIL
                   </div>
                   <div style={{ padding: '4px 6px', lineHeight: '1.3' }}>
-                    <b>Acta N°:</b> {formData.civilActa || '__________'} <br />
-                    <b>Folio:</b> {formData.civilFolio || '__________'} <br />
+                    <b>N°:</b> {formData.civilActa || '__________'} <br />
                     <b>Fecha:</b> {formatearFechaCorta(formData.civilFecha)} <br />
                     {esBautizo && <b>Certificado:</b>} {esBautizo && (formData.civilMunicipio || '__________')}
                   </div>
@@ -255,7 +254,6 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                   </div>
                 </div>
 
-                {/* NOTA MARGINAL */}
                 <div style={{ border: '1.5px solid #000000', display: 'flex', flexDirection: 'column', fontSize: '11px', maxHeight: '100px', minHeight: '80px', flex: 1 }}>
                   <div style={{ backgroundColor: '#e6e6e6', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
                     NOTA MARGINAL:
