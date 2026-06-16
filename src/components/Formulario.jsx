@@ -158,7 +158,7 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
           <h3 style={sectionTitle}>FECHA DE EXPEDICIÓN</h3>
           <div style={row}>
             <Input label="Se imprimirá con fecha de:" type="date" name="fechaExpedicion" value={formData.fechaExpedicion || ''} onChange={onChange} />
-            {(!requiereRegistroCivil) && <Input label="Lugar de Expedición" name="lugarExpedicion" value={formData.lugarExpedicion || 'Cabudare'} onChange={onChange} />}
+            {(!requiereRegistroCivil) && <Input label="Lugar de Expedición" name="lugarExpedicion" value={formData.lugarExpedicion || ''} onChange={onChange} />}
           </div>
         </div>
 
