@@ -61,43 +61,36 @@ export default function VistaImpresion({ certType, formData, onBack }) {
         
         {/* ENCABEZADO / MEMBRETE PARROQUIAL */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <img src="/arquibqto.png" style={{ height: '3.36cm', width: '3.1cm', objectFit: 'contain' }} alt="Arquidiócesis" />
+          <img src="/arquibqto.png" style={{ height: '80px', width: 'auto', objectFit: 'contain' }} alt="Arquidiócesis" />
           
           <div style={{ textAlign: 'center', flex: 1, padding: '0 10px' }}>
-            {/* Arquidiócesis de Barquisimeto (22) */}
-            <h2 style={{ margin: 0, fontSize: '22px', fontWeight: 'bold', letterSpacing: '0.3px' }}>Arquidiócesis de Barquisimeto</h2>
-            <div style={{ width: '100%', height: '0px', borderTop: '2px solid #0056b3', margin: '4px 0 6px 0' }}></div>
-            
-            {/* Parroquia, Urb y Edo en 14 */}
-            <h3 style={{ margin: '0 0 3px 0', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase' }}>PARROQUIA SANTA TERESITA DEL NIÑO JESÚS</h3>
-            <p style={{ margin: '0 0 3px 0', fontSize: '14px', fontWeight: 'bold' }}>Urb. del Este - Barquisimeto</p>
-            <p style={{ margin: '0 0 5px 0', fontSize: '14px', fontWeight: 'bold' }}>Edo. Lara - Venezuela</p>
-            
-            {/* Dirección en 10 */}
-            <p style={{ margin: '0 0 3px 0', fontSize: '10px', lineHeight: '1.3' }}>
+            <h2 style={{ margin: 0, fontSize: '23px', fontWeight: 'bold', letterSpacing: '0.3px' }}>Arquidiócesis de Barquisimeto</h2>
+            <div style={{ width: '100%', height: '0px', borderTop: '2px solid #0056b3', margin: '3px 0 5px 0' }}></div>
+            <h3 style={{ margin: '0 0 2px 0', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase' }}>PARROQUIA SANTA TERESITA DEL NIÑO JESÚS</h3>
+            <p style={{ margin: '0 0 2px 0', fontSize: '12px', fontWeight: 'bold' }}>Urb. del Este - Barquisimeto</p>
+            <p style={{ margin: '0 0 4px 0', fontSize: '12px', fontWeight: 'bold' }}>Edo. Lara - Venezuela</p>
+            <p style={{ margin: '0 0 2px 0', fontSize: '10.5px', lineHeight: '1.3' }}>
               <b>Dirección:</b> <span style={{ fontStyle: 'italic' }}>Calle 7 Urb. del Este. Barquisimeto - Venezuela</span>
             </p>
-            <p style={{ margin: 0, fontSize: '10px', fontStyle: 'italic', lineHeight: '1.3' }}>
+            <p style={{ margin: 0, fontSize: '10.5px', fontStyle: 'italic', lineHeight: '1.3' }}>
               RIF: G - 20017783-7 &nbsp;&nbsp; pqsantateresitabarquisimeto@gmail.com &nbsp;&nbsp; Teléfono: +58 4141590572
             </p>
           </div>          
-          
-          {/* Logo Teresita: 4.14 cm de alto y 4.31 cm de ancho */}
-          <img src="/stateresita.png" style={{ height: '4.14cm', width: '4.31cm', objectFit: 'contain' }} alt="Santa Teresita" />
+          <img src="/stateresita.png" style={{ height: '110px', width: 'auto', objectFit: 'contain' }} alt="Santa Teresita" />
         </div>
 
         <div style={{ width: '65%', height: '1px', backgroundColor: '#000000', margin: '15px auto 20px auto' }}></div>
 
-        {/* TÍTULO DEL DOCUMENTO (Certificado 20) */}
-        <h2 style={{ textAlign: 'center', fontSize: '20px', marginBottom: '25px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
+        {/* TÍTULO DEL DOCUMENTO */}
+        <h2 style={{ textAlign: 'center', fontSize: '17px', marginBottom: '22px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
           {obtenerTituloDocumento()}
         </h2>
 
         {/* SECCIÓN CENTRAL */}
         <div style={{ display: 'flex', gap: '20px', width: '100%', alignItems: 'stretch', marginBottom: '15px' }}>
           
-          {/* COLUMNA IZQUIERDA: TEXTO CONTINUO (Bloque central 11) */}
-          <div style={{ flex: 2.3, fontSize: '11px', lineHeight: '2.2', textAlign: 'justify', borderRight: '1px solid #000000', paddingRight: '15px' }}>
+          {/* COLUMNA IZQUIERDA: TEXTO CONTINUO */}
+          <div style={{ flex: 2.3, fontSize: '12px', lineHeight: '2.1', textAlign: 'justify', borderRight: '1px solid #000000', paddingRight: '15px' }}>
             El Presbítero <b>Freddy José Rodríguez Jiménez</b>, Párroco de esta comunidad eclesial, certifica que según consta en los datos del acta reseñados al margen, correspondiente al Libro de {esComunion ? 'Primeras Comuniones' : esConfirmacion ? 'Confirmaciones' : esMatrimonio ? 'Matrimonios' : 'Bautismos'} de esta parroquia:
             <br /><br />
             
@@ -105,13 +98,13 @@ export default function VistaImpresion({ certType, formData, onBack }) {
               <>
                 contrajeron nupcias, según el rito de la Santa Madre Iglesia, en esta Parroquia, el día: <b>{formatearFecha(formData.fechaSacramento)}</b>.
                 <br />
-                El Sr: <span style={{ fontSize: '12px', fontWeight: 'bold', textDecoration: 'underline' }}>{formData.esposoNombre || '________________________________________'}</span>.
+                El Sr: <span style={{ fontSize: '12.5px', fontWeight: 'bold', textDecoration: 'underline' }}>{formData.esposoNombre || '________________________________________'}</span>.
                 <br />
                 de estado civil <b>{formData.esposoEstadoCivil || 'Soltero'}</b>, de <b>{formData.esposoEdad || '___'}</b> años de edad, natural de <b>{formData.esposoNaturalDe || '_______________'}</b> vecino de <b>{formData.esposoVecinoDe || '_______________'}</b>.
                 <br />
                 Hijo de: <b>{formData.esposoPadre || '________________________________________'}</b> y de: <b>{formData.esposoMadre || '________________________________________'}</b>.
                 <br />
-                y la Sra. <span style={{ fontSize: '12px', fontWeight: 'bold', textDecoration: 'underline' }}>{formData.esposaNombre || '________________________________________'}</span>.
+                y la Sra. <span style={{ fontSize: '12.5px', fontWeight: 'bold', textDecoration: 'underline' }}>{formData.esposaNombre || '________________________________________'}</span>.
                 <br />
                 de estado civil <b>{formData.esposaEstadoCivil || 'Soltera'}</b>, de <b>{formData.esposaEdad || '___'}</b> años de edad, natural de <b>{formData.esposaNaturalDe || '_______________'}</b> vecina de <b>{formData.esposaVecinaDe || '_______________'}</b>.
                 <br />
@@ -119,7 +112,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
               </>
             ) : esComunion ? (
               <>
-                <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '13px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
+                <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '14px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
                   {formData.bautizadoNombre ? formData.bautizadoNombre.toUpperCase() : '________________________________________'}
                 </div>
                 De <b>{formData.bautizadoEdad || '___ años'}</b> de edad, recibió el Sacramento de la Eucaristía el día <b>{formatearFecha(formData.fechaSacramento)}</b>.
@@ -136,7 +129,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
               </>
             ) : esConfirmacion ? (
               <>
-                <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '13px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
+                <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '14px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
                   {formData.bautizadoNombre ? formData.bautizadoNombre.toUpperCase() : '________________________________________'}
                 </div>
                 De <b>{formData.bautizadoEdad || '___ años'}</b> de edad, recibió el Sacramento de la Confirmación el día <b>{formatearFecha(formData.fechaSacramento)}</b>.
@@ -153,7 +146,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
               </>
             ) : (
               <>
-                <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '13px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
+                <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '14px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
                   {formData.bautizadoNombre ? formData.bautizadoNombre.toUpperCase() : '________________________________________'}
                 </div>
                 Fue bautizado(a) el día: <b>{formatearFecha(formData.fechaSacramento)}</b>.
@@ -174,7 +167,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
             
             <br />
             
-            {/* ALINEACIÓN DE PADRINOS */}
+            {/* ALINEACIÓN DE PADRINOS (PARA BAUTIZO Y CONFIRMACIÓN) */}
             {!esComunion && (
               <div style={{ display: 'flex', marginBottom: '15px' }}>
                 <span style={{ fontWeight: 'bold', width: '85px', flexShrink: 0 }}>PADRINOS:</span>
@@ -190,11 +183,11 @@ export default function VistaImpresion({ certType, formData, onBack }) {
             Se expide el presente certificado, a solicitud de parte interesada, para fines única y exclusivamente: <span style={{ fontWeight: 'bold' }}>{(formData.motivo || '').toUpperCase()}</span>.
           </div>
 
-          {/* COLUMNA DERECHA SELECTIVA (Bloque derecho 10) */}
-          <div style={{ flex: 0.9, display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '5.2cm', fontSize: '10px' }}>
+          {/* COLUMNA DERECHA SELECTIVA */}
+          <div style={{ flex: 0.9, display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '5.2cm' }}>
             
             {/* BLOQUE 1: REGISTRO ECLESIÁSTICO */}
-            <table style={{ width: '100%', borderCollapse: 'collapse', border: '1.5px solid #000000', fontSize: '10px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', border: '1.5px solid #000000', fontSize: '11px' }}>
               <thead>
                 <tr>
                   <th colSpan="2" style={{ borderBottom: '1.5px solid #000000', padding: '4px', backgroundColor: '#e6e6e6', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
@@ -204,20 +197,20 @@ export default function VistaImpresion({ certType, formData, onBack }) {
               </thead>
               <tbody>
                 <tr>
-                  <td style={{ padding: '5px 6px', borderBottom: '1px solid #000000', borderRight: '1px solid #000000', width: '45%', fontWeight: 'bold' }}>LIBRO</td>
-                  <td style={{ padding: '5px 6px', borderBottom: '1px solid #000000', textAlign: 'center', fontWeight: 'bold' }}>{formatearTresDigitos(formData.libro)}</td>
+                  <td style={{ padding: '4px 6px', borderBottom: '1px solid #000000', borderRight: '1px solid #000000', width: '45%', fontWeight: 'bold' }}>LIBRO</td>
+                  <td style={{ padding: '4px 6px', borderBottom: '1px solid #000000', textAlign: 'center', fontWeight: 'bold' }}>{formatearTresDigitos(formData.libro)}</td>
                 </tr>
                 <tr>
-                  <td style={{ padding: '5px 6px', borderBottom: '1px solid #000000', borderRight: '1px solid #000000', fontWeight: 'bold' }}>FOLIO</td>
-                  <td style={{ padding: '5px 6px', borderBottom: '1px solid #000000', textAlign: 'center', fontWeight: 'bold' }}>{formatearTresDigitos(formData.folio)}</td>
+                  <td style={{ padding: '4px 6px', borderBottom: '1px solid #000000', borderRight: '1px solid #000000', fontWeight: 'bold' }}>FOLIO</td>
+                  <td style={{ padding: '4px 6px', borderBottom: '1px solid #000000', textAlign: 'center', fontWeight: 'bold' }}>{formatearTresDigitos(formData.folio)}</td>
                 </tr>
                 <tr>
-                  <td style={{ padding: '5px 6px', borderBottom: '1px solid #000000', borderRight: '1px solid #000000', fontWeight: 'bold' }}>NUM.</td>
-                  <td style={{ padding: '5px 6px', borderBottom: '1px solid #000000', textAlign: 'center', fontWeight: 'bold' }}>{formatearTresDigitos(formData.tecnicoMun)}</td>
+                  <td style={{ padding: '4px 6px', borderBottom: '1px solid #000000', borderRight: '1px solid #000000', fontWeight: 'bold' }}>NUM.</td>
+                  <td style={{ padding: '4px 6px', borderBottom: '1px solid #000000', textAlign: 'center', fontWeight: 'bold' }}>{formatearTresDigitos(formData.tecnicoMun)}</td>
                 </tr>
                 <tr>
-                  <td style={{ padding: '5px 6px', borderRight: '1px solid #000000', fontWeight: 'bold' }}>AÑO</td>
-                  <td style={{ padding: '5px 6px', textAlign: 'center', fontWeight: 'bold' }}>{formData.tecnicoAnio || '____'}</td>
+                  <td style={{ padding: '4px 6px', borderRight: '1px solid #000000', fontWeight: 'bold' }}>AÑO</td>
+                  <td style={{ padding: '4px 6px', textAlign: 'center', fontWeight: 'bold' }}>{formData.tecnicoAnio || '____'}</td>
                 </tr>
               </tbody>
             </table>
@@ -225,13 +218,12 @@ export default function VistaImpresion({ certType, formData, onBack }) {
             {/* BLOQUES OPCIONALES OCULTOS PARA COMUNIÓN Y CONFIRMACIÓN */}
             {!esFormatoLimpio && (
               <>
-                <div style={{ border: '1.5px solid #000000', display: 'flex', flexDirection: 'column', fontSize: '10px' }}>
+                <div style={{ border: '1.5px solid #000000', display: 'flex', flexDirection: 'column', fontSize: '11px' }}>
                   <div style={{ backgroundColor: '#e6e6e6', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
                     INSCRIPCION CIVIL
                   </div>
-                  <div style={{ padding: '5px 6px', lineHeight: '1.4' }}>
-                    <b>Acta N°:</b> {formData.civilActa || '__________'} <br />
-                    
+                  <div style={{ padding: '4px 6px', lineHeight: '1.3' }}>
+                    <b>N°:</b> {formData.civilActa || '__________'} <br />
                     <b>Fecha:</b> {formatearFechaCorta(formData.civilFecha)} <br />
                     {esBautizo && <b>Certificado:</b>} {esBautizo && (formData.civilMunicipio || '__________')}
                   </div>
@@ -239,7 +231,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                   <div style={{ backgroundColor: '#e6e6e6', borderTop: '1px solid #000000', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
                     REGISTRO CIVIL
                   </div>
-                  <div style={{ padding: '5px 6px' }}>
+                  <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
                     {formData.civilNombreRegistro || ''}
                   </div>
                   
@@ -248,7 +240,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                       <div style={{ backgroundColor: '#e6e6e6', borderTop: '1px solid #000000', borderBottom: '1px solid #000000', padding: '2px 4px', fontWeight: 'bold', textAlign: 'center', fontSize: '9.5px' }}>
                         MUNICIPIO
                       </div>
-                      <div style={{ padding: '5px 6px' }}>
+                      <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
                         {formData.civilMunicipio || ''}
                       </div>
                     </>
@@ -257,17 +249,16 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                   <div style={{ backgroundColor: '#e6e6e6', borderTop: '1px solid #000000', borderBottom: '1px solid #000000', padding: '2px 4px', fontWeight: 'bold', textAlign: 'center', fontSize: '9.5px' }}>
                     ESTADO
                   </div>
-                  <div style={{ padding: '5px 6px' }}>
+                  <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
                     {formData.civilEstado || ''}
                   </div>
                 </div>
 
-                {/* NOTA MARGINAL */}
-                <div style={{ border: '1.5px solid #000000', display: 'flex', flexDirection: 'column', fontSize: '10px', maxHeight: '120px', minHeight: '90px', flex: 1 }}>
+                <div style={{ border: '1.5px solid #000000', display: 'flex', flexDirection: 'column', fontSize: '11px', maxHeight: '100px', minHeight: '80px', flex: 1 }}>
                   <div style={{ backgroundColor: '#e6e6e6', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
                     NOTA MARGINAL:
                   </div>
-                  <div style={{ padding: '6px', lineHeight: '1.3', fontStyle: 'italic', textAlign: 'justify', fontSize: '9.5px', overflow: 'hidden', whiteSpace: 'pre-wrap' }}>
+                  <div style={{ padding: '6px', lineHeight: '1.3', fontStyle: 'italic', textAlign: 'justify', fontSize: '10px', overflow: 'hidden', whiteSpace: 'pre-wrap' }}>
                     {formData.observaciones || ''}
                   </div>
                 </div>
@@ -277,9 +268,9 @@ export default function VistaImpresion({ certType, formData, onBack }) {
           </div>
         </div>
 
-        {/* PIE DE FE Y FIRMAS (Se alinea al texto del bloque central de 11px) */}
+        {/* PIE DE FE Y FIRMAS */}
         <div style={{ position: 'absolute', bottom: '2.4cm', left: '1.5cm', right: '1.5cm', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: 'calc(100% - 3.0cm)' }}>
-          <div style={{ fontSize: '11px', lineHeight: '1.8', maxWidth: '55%', textAlign: 'left', paddingBottom: '5px' }}>
+          <div style={{ fontSize: '12px', lineHeight: '1.8', maxWidth: '55%', textAlign: 'left', paddingBottom: '5px' }}>
             En {formData.lugarExpedicion || 'Barquisimeto'}, {formatearFecha(formData.fechaExpedicion)}.
             <br />
             Doy fe de lo anteriormente expuesto.
@@ -287,14 +278,14 @@ export default function VistaImpresion({ certType, formData, onBack }) {
           
           <div style={{ position: 'relative', textAlign: 'center', width: '250px' }}>
             <img src="/firma.png" onError={(e) => e.target.style.display='none'} style={{ height: '55px', position: 'absolute', top: '-45px', left: '50%', transform: 'translateX(-50%)', zIndex: 1, pointerEvents: 'none' }} alt="" />
-            <div style={{ borderTop: '1px solid #000000', width: '100%', paddingTop: '4px', fontWeight: 'bold', fontSize: '13px', position: 'relative', zIndex: 2 }}>
+            <div style={{ borderTop: '1px solid #000000', width: '100%', paddingTop: '4px', fontWeight: 'bold', fontSize: '13.5px', position: 'relative', zIndex: 2 }}>
               Pbro. Freddy J. Rodríguez J.
             </div>
-            <div style={{ fontSize: '11px', marginTop: '1px' }}>Párroco</div>
+            <div style={{ fontSize: '11.5px', marginTop: '1px' }}>Párroco</div>
           </div>
         </div>
 
-        {/* NOTA ADVERTENCIA LEGAL (Nota 9) */}
+        {/* NOTA ADVERTENCIA LEGAL */}
         <div style={{ position: 'absolute', bottom: '0.6cm', left: '1.5cm', right: '1.5cm', fontSize: '9px', borderTop: '1px solid #e0e0e0', paddingTop: '5px', textAlign: 'justify', lineHeight: '1.25' }}>
           <b>NOTA:</b> Si este certificado va a ser utilizado fuera de la Arquidiócesis debe ser autenticado en la Cancillería de la Curia Arquidiocesana.
         </div>
