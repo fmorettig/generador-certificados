@@ -38,6 +38,10 @@ export default function VistaImpresion({ certType, formData, onBack }) {
 
   const esMatrimonio = certType === 'matrimonio';
   const esBautizo = certType === 'bautizo';
+  const esComunion = certType === 'comunion';
+  const esConfirmacion = certType === 'confirmacion';
+  
+  const esFormatoLimpio = esComunion || esConfirmacion;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
@@ -87,7 +91,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
           
           {/* COLUMNA IZQUIERDA: TEXTO CONTINUO */}
           <div style={{ flex: 2.3, fontSize: '12px', lineHeight: '2.1', textAlign: 'justify', borderRight: '1px solid #000000', paddingRight: '15px' }}>
-            El Presbítero <b>Freddy José Rodríguez Jiménez</b>, Párroco de esta comunidad eclesial, certifica que según consta en el Acta reseñada al margen, correspondiente al Libro de {esMatrimonio ? 'Matrimonios' : 'Bautismos'}, que reposa en los archivos de esta parroquia:
+            El Presbítero <b>Freddy José Rodríguez Jiménez</b>, Párroco de esta comunidad eclesial, certifica que según consta en los datos del acta reseñados al margen, correspondiente al Libro de {esComunion ? 'Primeras Comuniones' : esConfirmacion ? 'Confirmaciones' : esMatrimonio ? 'Matrimonios' : 'Bautismos'} de esta parroquia:
             <br /><br />
             
             {esMatrimonio ? (
@@ -106,8 +110,30 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                 <br />
                 Hija de: <b>{formData.esposaPadre || '________________________________________'}</b> y de: <b>{formData.esposaMadre || '________________________________________'}</b>.
               </>
+            ) : esComunion ? (
+              <>
+                <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '14px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
+                  {formData.bautizadoNombre ? formData.bautizadoNombre.toUpperCase() : '________________________________________'}
+                </div>
+                De <b>{formData.bautizadoEdad || '___ años'}</b> de edad, recibió el Sacramento de la Eucaristía el día <b>{formatearFecha(formData.fechaSacramento)}</b>.
+                <br /><br />
+                <span style={{ fontWeight: 'bold' }}>PADRES:</span> <b>{formData.esposoPadre || '________________________________________'}</b>
+                <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{formData.esposoMadre || '________________________________________'}</b>
+              </>
+            ) : esConfirmacion ? (
+              /* FORMATO CORREGIDO EXACTO PARA CONFIRMACIÓN */
+              <>
+                <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '14px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
+                  {formData.bautizadoNombre ? formData.bautizadoNombre.toUpperCase() : '________________________________________'}
+                </div>
+                De <b>{formData.bautizadoEdad || '___ años'}</b> de edad, recibió el Sacramento de la Confirmación el día <b>{formatearFecha(formData.fechaSacramento)}</b>.
+                <br /><br />
+                <span style={{ fontWeight: 'bold' }}>PADRES:</span> <b>{formData.esposoPadre || '________________________________________'}</b>
+                <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{formData.esposoMadre || '________________________________________'}</b>
+              </>
             ) : (
-              /* FORMATO CORREGIDO EXACTO PARA BAUTIZO */
               <>
                 <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '14px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
                   {formData.bautizadoNombre ? formData.bautizadoNombre.toUpperCase() : '________________________________________'}
@@ -123,16 +149,20 @@ export default function VistaImpresion({ certType, formData, onBack }) {
             )}
             
             <br />
-            <span style={{ fontWeight: 'bold' }}>PADRINOS:</span> <b>{formData.padrino || '________________________________________'}</b>
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{formData.madrina || '________________________________________'}</b>
-            <br />
+            {!esComunion && (
+              <>
+                <span style={{ fontWeight: 'bold' }}>PADRINOS:</span> <b>{formData.padrino || '________________________________________'}</b>
+                <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{formData.madrina || '________________________________________'}</b>
+                <br />
+              </>
+            )}
             <span style={{ fontWeight: 'bold' }}>MINISTRO:</span> <b>{formData.ministro || '________________________________________'}</b>.
             <br /><br />
             Se expide el presente certificado, a solicitud de parte interesada, para fines única y exclusivamente: <span style={{ fontWeight: 'bold' }}>{(formData.motivo || 'Fines Legales').toUpperCase()}</span>.
           </div>
 
-          {/* COLUMNA DERECHA REESTRUCTURADA */}
+          {/* COLUMNA DERECHA SELECTIVA */}
           <div style={{ flex: 0.9, display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '5.2cm' }}>
             
             {/* BLOQUE 1: REGISTRO ECLESIÁSTICO */}
@@ -164,58 +194,55 @@ export default function VistaImpresion({ certType, formData, onBack }) {
               </tbody>
             </table>
 
-            {/* BLOQUE 2: INSCRIPCIÓN Y REGISTRO CIVIL (SELECTIVO SEGÚN EL SACRAMENTO) */}
-            <div style={{ border: '1.5px solid #000000', display: 'flex', flexDirection: 'column', fontSize: '11px' }}>
-              <div style={{ backgroundColor: '#e6e6e6', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
-                INSCRIPCION CIVIL
-              </div>
-              <div style={{ padding: '4px 6px', lineHeight: '1.3' }}>
-                <b>N°:</b> {formData.civilActa || '__________'} <br />
-                <b>Fecha:</b> {formatearFechaCorta(formData.civilFecha)} <br />
-                {/* RENDERIZADO EXCLUSIVO DE CERTIFICADO PARA BAUTIZO */}
-                {esBautizo && (
-                  <>
-                    <b>Certificado:</b> {formData.civilMunicipio || '__________'}
-                  </>
-                )}
-              </div>
-              
-              <div style={{ backgroundColor: '#e6e6e6', borderTop: '1px solid #000000', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
-                {esMatrimonio ? 'REGISTRO CIVIL' : 'REGISTRO CIVIL'}
-              </div>
-              <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
-                {formData.civilNombreRegistro || (esMatrimonio ? 'Municipio Iribarren' : '__________')}
-              </div>
-              
-              {/* RENDERIZADO EXCLUSIVO DE MUNICIPIO PARA MATRIMONIO */}
-              {esMatrimonio && (
-                <>
-                  <div style={{ backgroundColor: '#e6e6e6', borderTop: '1px solid #000000', borderBottom: '1px solid #000000', padding: '2px 4px', fontWeight: 'bold', textAlign: 'center', fontSize: '9.5px' }}>
-                    MUNICIPIO
+            {/* BLOQUES OPCIONALES OCULTOS PARA COMUNIÓN Y CONFIRMACIÓN */}
+            {!esFormatoLimpio && (
+              <>
+                <div style={{ border: '1.5px solid #000000', display: 'flex', flexDirection: 'column', fontSize: '11px' }}>
+                  <div style={{ backgroundColor: '#e6e6e6', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
+                    INSCRIPCION CIVIL
+                  </div>
+                  <div style={{ padding: '4px 6px', lineHeight: '1.3' }}>
+                    <b>N°:</b> {formData.civilActa || '__________'} <br />
+                    <b>Fecha:</b> {formatearFechaCorta(formData.civilFecha)} <br />
+                    {esBautizo && <b>Certificado:</b>} {esBautizo && (formData.civilMunicipio || '__________')}
+                  </div>
+                  
+                  <div style={{ backgroundColor: '#e6e6e6', borderTop: '1px solid #000000', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
+                    REGISTRO CIVIL
                   </div>
                   <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
-                    {formData.civilMunicipio || 'Iribarren'}
+                    {formData.civilNombreRegistro || 'Municipio Iribarren'}
                   </div>
-                </>
-              )}
-              
-              <div style={{ backgroundColor: '#e6e6e6', borderTop: '1px solid #000000', borderBottom: '1px solid #000000', padding: '2px 4px', fontWeight: 'bold', textAlign: 'center', fontSize: '9.5px' }}>
-                ESTADO
-              </div>
-              <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
-                {formData.civilEstado || 'Lara'}
-              </div>
-            </div>
+                  
+                  {esMatrimonio && (
+                    <>
+                      <div style={{ backgroundColor: '#e6e6e6', borderTop: '1px solid #000000', borderBottom: '1px solid #000000', padding: '2px 4px', fontWeight: 'bold', textAlign: 'center', fontSize: '9.5px' }}>
+                        MUNICIPIO
+                      </div>
+                      <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
+                        {formData.civilMunicipio || 'Iribarren'}
+                      </div>
+                    </>
+                  )}
+                  
+                  <div style={{ backgroundColor: '#e6e6e6', borderTop: '1px solid #000000', borderBottom: '1px solid #000000', padding: '2px 4px', fontWeight: 'bold', textAlign: 'center', fontSize: '9.5px' }}>
+                    ESTADO
+                  </div>
+                  <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
+                    {formData.civilEstado || 'Lara'}
+                  </div>
+                </div>
 
-            {/* BLOQUE 3: NOTA MARGINAL FIJA */}
-            <div style={{ border: '1.5px solid #000000', display: 'flex', flexDirection: 'column', fontSize: '11px', maxHeight: '100px', minHeight: '80px', flex: 1 }}>
-              <div style={{ backgroundColor: '#e6e6e6', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
-                NOTA MARGINAL:
-              </div>
-              <div style={{ padding: '6px', lineHeight: '1.3', fontStyle: 'italic', textAlign: 'justify', fontSize: '10px', overflow: 'hidden', whiteSpace: 'pre-wrap' }}>
-                {formData.observaciones || ''}
-              </div>
-            </div>
+                <div style={{ border: '1.5px solid #000000', display: 'flex', flexDirection: 'column', fontSize: '11px', maxHeight: '100px', minHeight: '80px', flex: 1 }}>
+                  <div style={{ backgroundColor: '#e6e6e6', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
+                    NOTA MARGINAL:
+                  </div>
+                  <div style={{ padding: '6px', lineHeight: '1.3', fontStyle: 'italic', textAlign: 'justify', fontSize: '10px', overflow: 'hidden', whiteSpace: 'pre-wrap' }}>
+                    {formData.observaciones || ''}
+                  </div>
+                </div>
+              </>
+            )}
 
           </div>
         </div>
@@ -223,7 +250,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
         {/* PIE DE FE Y FIRMAS */}
         <div style={{ position: 'absolute', bottom: '2.4cm', left: '1.5cm', right: '1.5cm', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: 'calc(100% - 3.0cm)' }}>
           <div style={{ fontSize: '12px', lineHeight: '1.8', maxWidth: '55%', textAlign: 'left', paddingBottom: '5px' }}>
-            En Barquisimeto, {formatearFecha(formData.fechaExpedicion)}.
+            En {formData.lugarExpedicion || 'Barquisimeto'}, {formatearFecha(formData.fechaExpedicion)}.
             <br />
             Doy fe de lo anteriormente expuesto.
           </div>

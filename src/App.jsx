@@ -29,7 +29,7 @@ export default function App() {
       // Campos generales
       nombres: '', fechaSacramento: '', celebrante: '', libro: '', folio: '', partida: '', observaciones: '',
       lugarSacramento: 'Parroquia Sta. Teresita del Niño Jesús',
-      motivo: 'Nulidad Matrimonial',
+      motivo: '',
       fechaExpedicion: fechaHoy,
       
       // Campos específicos de Matrimonio (Esposo)
@@ -126,7 +126,7 @@ export default function App() {
                 onMouseLeave={() => setHoveredCard(null)}
                 style={getCardStyle(hoveredCard === 'confirmacion')}
               >
-                <Heart size={48} color={COLORS.gold} strokeWidth={1.1} /> 
+                <CheckCircle size={48} color={COLORS.gold} strokeWidth={1.1} /> 
                 CERTIFICADO DE CONFIRMACIÓN
               </button>
 
@@ -136,7 +136,7 @@ export default function App() {
                 onMouseLeave={() => setHoveredCard(null)}
                 style={getCardStyle(hoveredCard === 'matrimonio')}
               >
-                <CheckCircle size={48} color={COLORS.gold} strokeWidth={1.1} /> 
+                <Heart size={48} color={COLORS.gold} strokeWidth={1.1} /> 
                 CERTIFICADO DE MATRIMONIO
               </button>
 

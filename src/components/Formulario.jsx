@@ -18,11 +18,16 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
 
   const esMatrimonio = certType === 'matrimonio';
   const esBautizo = certType === 'bautizo';
+  const esComunion = certType === 'comunion';
+  const esConfirmacion = certType === 'confirmacion';
+  
+  // Para simplificar condiciones de formatos limpios (Comunión y Confirmación)
+  const esFormatoLimpio = esComunion || esConfirmacion;
 
   const obtenerTituloSacramento = () => {
     if (esBautizo) return 'DATOS: BAUTIZO';
-    if (certType === 'comunion') return 'DATOS: PRIMERA COMUNIÓN';
-    if (certType === 'confirmacion') return 'DATOS: CONFIRMACIÓN';
+    if (esComunion) return 'DATOS: PRIMERA COMUNIÓN';
+    if (esConfirmacion) return 'DATOS: CONFIRMACIÓN';
     return 'DATOS: MATRIMONIO';
   };
 
@@ -78,13 +83,21 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
             </div>
           </>
         ) : (
-          /* SECCIÓN PARA BAUTIZO Y INDIVIDULES */
+          /* SECCIÓN PARA BAUTIZO, COMUNIÓN O CONFIRMACIÓN */
           <div style={gridSection}>
-            <h3 style={sectionTitle}>DATOS DEL BAUTIZADO / TITULAR</h3>
+            <h3 style={sectionTitle}>
+              {esComunion ? "DATOS DE QUIEN RECIBE LA COMUNIÓN" : esConfirmacion ? "DATOS DEL CONFIRMANDO" : "DATOS DEL BAUTIZADO / TITULAR"}
+            </h3>
             <Input label="Nombre completo" name="bautizadoNombre" value={formData.bautizadoNombre || ''} onChange={onChange} />
             <div style={row}>
-              <Input label="Lugar de Nacimiento (Ciudad, Estado)" name="bautizadoLugarNac" value={formData.bautizadoLugarNac || ''} onChange={onChange} />
-              <Input label="Fecha de Nacimiento" type="date" name="bautizadoFechaNac" value={formData.bautizadoFechaNac || ''} onChange={onChange} />
+              {esBautizo ? (
+                <>
+                  <Input label="Lugar de Nacimiento (Ciudad, Estado)" name="bautizadoLugarNac" value={formData.bautizadoLugarNac || ''} onChange={onChange} />
+                  <Input label="Fecha de Nacimiento" type="date" name="bautizadoFechaNac" value={formData.bautizadoFechaNac || ''} onChange={onChange} />
+                </>
+              ) : (
+                <Input label="Edad (Ej: 15 años)" name="bautizadoEdad" value={formData.bautizadoEdad || ''} onChange={onChange} />
+              )}
             </div>
             <div style={row}>
               <Input label="Hijo de (Padre)" name="esposoPadre" value={formData.esposoPadre || ''} onChange={onChange} />
@@ -93,12 +106,12 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
           </div>
         )}
 
-        {/* SACRAMENTO Y MINISTROS */}
+        {/* CELEBRACIÓN Y MINISTROS */}
         <div style={gridSection}>
-          <h3 style={sectionTitle}>CELEBRACIÓN Y TESTIGOS</h3>
+          <h3 style={sectionTitle}>CELEBRACIÓN</h3>
           <div style={row}>
             <Input 
-              label={esMatrimonio ? "Fecha del Matrimonio" : "Fecha del Bautizo / Sacramento"} 
+              label={esMatrimonio ? "Fecha del Matrimonio" : esComunion ? "Fecha de la Primera Comunión" : esConfirmacion ? "Fecha de la Confirmación" : "Fecha del Bautizo"} 
               type="date" 
               name="fechaSacramento" 
               value={formData.fechaSacramento || ''} 
@@ -106,10 +119,12 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
             />
             <Input label="Ministro (Quien ejerció)" name="ministro" value={formData.ministro || ''} onChange={onChange} />
           </div>
-          <div style={row}>
-            <Input label="Padrino" name="padrino" value={formData.padrino || ''} onChange={onChange} />
-            <Input label="Madrina" name="madrina" value={formData.madrina || ''} onChange={onChange} />
-          </div>
+          {!esComunion && (
+            <div style={row}>
+              <Input label="Padrino" name="padrino" value={formData.padrino || ''} onChange={onChange} />
+              <Input label="Madrina" name="madrina" value={formData.madrina || ''} onChange={onChange} />
+            </div>
+          )}
           <Input label="Motivo de Emisión" name="motivo" value={formData.motivo || ''} onChange={onChange} />
         </div>
 
@@ -119,27 +134,36 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
           <div style={row}>
             <Input label="Libro" name="libro" value={formData.libro || ''} onChange={onChange} />
             <Input label="Folio" name="folio" value={formData.folio || ''} onChange={onChange} />
-            <Input label="Mun / Partida (N°)" name="tecnicoMun" value={formData.tecnicoMun || ''} onChange={onChange} />
+            <Input label="Num." name="tecnicoMun" value={formData.tecnicoMun || ''} onChange={onChange} />
             <Input label="Año" name="tecnicoAnio" value={formData.tecnicoAnio || ''} onChange={onChange} />
           </div>
-          <div style={row}>
-            <Input label="Inscripción Civil N°" name="civilActa" value={formData.civilActa || ''} onChange={onChange} />
-            <Input label="Fecha Inscripción Civil" type="date" name="civilFecha" value={formData.civilFecha || ''} onChange={onChange} />
-            <Input label={esBautizo ? "Certificado N°" : "Municipio / Prefectura"} name="civilMunicipio" value={formData.civilMunicipio || ''} onChange={onChange} />
-            <Input label="Estado" name="civilEstado" value={formData.civilEstado || ''} onChange={onChange} />
-          </div>
+          
+          {/* Ocultamos los datos civiles si es comunión o confirmación */}
+          {!esFormatoLimpio && (
+            <div style={row}>
+              <Input label="Inscripción Civil N°" name="civilActa" value={formData.civilActa || ''} onChange={onChange} />
+              <Input label="Fecha Inscripción Civil" type="date" name="civilFecha" value={formData.civilFecha || ''} onChange={onChange} />
+              <Input label={esBautizo ? "Certificado N°" : "Municipio / Prefectura"} name="civilMunicipio" value={formData.civilMunicipio || ''} onChange={onChange} />
+              <Input label="Estado" name="civilEstado" value={formData.civilEstado || ''} onChange={onChange} />
+            </div>
+          )}
         </div>
 
         <div style={gridSection}>
           <h3 style={sectionTitle}>FECHA DE EXPEDICIÓN</h3>
-          <Input label="Se imprimirá con fecha de:" type="date" name="fechaExpedicion" value={formData.fechaExpedicion || ''} onChange={onChange} />
+          <div style={row}>
+            <Input label="Se imprimirá con fecha de:" type="date" name="fechaExpedicion" value={formData.fechaExpedicion || ''} onChange={onChange} />
+            {esFormatoLimpio && <Input label="Lugar de Expedición" name="lugarExpedicion" value={formData.lugarExpedicion || 'Cabudare'} onChange={onChange} />}
+          </div>
         </div>
 
-        {/* OBSERVACIONES */}
-        <div style={gridSection}>
-          <h3 style={sectionTitle}>NOTA MARGINAL</h3>
-          <textarea name="observaciones" value={formData.observaciones || ''} onChange={onChange} style={textArea} />
-        </div>
+        {/* NOTA MARGINAL (Oculta para formatos limpios) */}
+        {!esFormatoLimpio && (
+          <div style={gridSection}>
+            <h3 style={sectionTitle}>NOTA MARGINAL</h3>
+            <textarea name="observaciones" value={formData.observaciones || ''} onChange={onChange} style={textArea} />
+          </div>
+        )}
 
         <div style={{ display: 'flex', gap: '15px' }}>
           <button onClick={guardarBorradorLocal} style={{ color: COLORS.gold, border: 'none', background: 'none', fontWeight: 'bold', cursor: 'pointer' }}>Guardar Borrador (.json)</button>
