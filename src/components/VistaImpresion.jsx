@@ -231,7 +231,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                   </div>
                   <div style={{ padding: '5px 6px', lineHeight: '1.4' }}>
                     <b>Acta N°:</b> {formData.civilActa || '__________'} <br />
-                    <b>Folio:</b> {formData.civilFolio || '__________'} <br />
+                    
                     <b>Fecha:</b> {formatearFechaCorta(formData.civilFecha)} <br />
                     {esBautizo && <b>Certificado:</b>} {esBautizo && (formData.civilMunicipio || '__________')}
                   </div>
