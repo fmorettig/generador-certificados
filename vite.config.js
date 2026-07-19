@@ -14,6 +14,7 @@ export default defineConfig({
         'personal_monotipo1.png',
         'stateresita.png',
         'tere.png',
+        'terefondo.png',
         'teresitalogo.png',
         'vite.svg'
       ],
@@ -28,13 +29,13 @@ export default defineConfig({
         icons: [
           {
             // CAMBIADO AQUÍ PARA LA PWA
-            src: 'tere.png', 
+            src: 'terefondo.png', 
             sizes: '192x192',
             type: 'image/png'
           },
           {
             // CAMBIADO AQUÍ PARA LA PWA
-            src: 'tere.png', 
+            src: 'terefondo.png', 
             sizes: '512x512',
             type: 'image/png'
           }
