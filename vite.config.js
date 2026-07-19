@@ -7,7 +7,16 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['teresitalogo.png'],
+      includeAssets: [
+        'arquibqto.png',
+        'personal_isotipo.png',
+        'personal_monotipo.png',
+        'personal_monotipo1.png',
+        'stateresita.png',
+        'tere.png',
+        'teresitalogo.png',
+        'vite.svg'
+      ],
       manifest: {
         name: 'Generador de Certificados - Parroquia Sta. Teresita',
         short_name: 'Certificados Teresita',
@@ -18,12 +27,14 @@ export default defineConfig({
         orientation: 'portrait',
         icons: [
           {
-            src: 'teresitalogo.png',
+            // CAMBIADO AQUÍ PARA LA PWA
+            src: 'tere.png', 
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'teresitalogo.png',
+            // CAMBIADO AQUÍ PARA LA PWA
+            src: 'tere.png', 
             sizes: '512x512',
             type: 'image/png'
           }

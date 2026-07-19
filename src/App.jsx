@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
-import { FileText, Award, Heart, CheckCircle, FolderOpen, ChevronRight } from 'lucide-react';
+import { FileText, Award, Heart, CheckCircle, FolderOpen, ChevronRight, CalendarDays } from 'lucide-react';
 import Formulario from './components/Formulario';
 import VistaImpresion from './components/VistaImpresion';
+import Formatos from './components/Formatos'; // Importamos el nuevo componente
 
 const COLORS = {
   brown: '#603828',
@@ -19,6 +20,8 @@ export default function App() {
   const [formData, setFormData] = useState({});
   const [hoveredCard, setHoveredCard] = useState(null);
   const [hoveredDraft, setHoveredDraft] = useState(false);
+  const [hoveredFormatos, setHoveredFormatos] = useState(false);
+  const [hoveredFooterLogo, setHoveredFooterLogo] = useState(false); // Estado para el hover de tu firma
   const fileInputRef = useRef(null);
 
   const initForm = (type) => {
@@ -26,19 +29,12 @@ export default function App() {
     const fechaHoy = new Date().toISOString().split('T')[0];
     
     setFormData({
-      // Campos generales
       nombres: '', fechaSacramento: '', celebrante: '', libro: '', folio: '', partida: '', observaciones: '',
       lugarSacramento: 'Parroquia Sta. Teresita del Niño Jesús',
       motivo: '',
       fechaExpedicion: fechaHoy,
-      
-      // Campos específicos de Matrimonio (Esposo)
       esposoNombre: '', esposoEdad: '', esposoEstadoCivil: 'Soltero', esposoNaturalDe: '', esposoVecinoDe: '', esposoPadre: '', esposoMadre: '',
-      
-      // Campos específicos de Matrimonio (Esposa)
-      esposaNombre: '', esposaEdad: '', esposaEstadoCivil: 'Soltera', esposaNaturalDe: '', esposaVecinaDe: '', esposaPadre: '', esposaMadre: '',
-      
-      // Otros
+      espesaNombre: '', esposaEdad: '', esposaEstadoCivil: 'Soltera', esposaNaturalDe: '', esposaVecinaDe: '', esposaPadre: '', esposaMadre: '',
       padrino: '', madrina: '', ministro: '',
       civilActa: '', civilFecha: '', civilMunicipio: '', civilEstado: '',
       tecnicoMun: '', tecnicoAnio: new Date().getFullYear().toString()
@@ -77,7 +73,7 @@ export default function App() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <img src="/teresitalogo.png" alt="Logo" style={{ height: '68px', objectFit: 'contain' }} />
           <div style={{ width: '1px', height: '30px', backgroundColor: COLORS.gold, opacity: 0.5 }}></div>
-          <span style={{ fontFamily: "'Georgia', serif", fontSize: '16px', color: COLORS.cream, letterSpacing: '0.5px' }}>
+          <span style={{ fontFamily: "'Georgia', serif", fontSize: '16px', color: COLORS.cream, letterSpacing: '0.5px', cursor: 'pointer' }} onClick={() => setScreen('home')}>
             Parroquia Santa Teresita del Niño Jesús
           </span>
         </div>
@@ -98,71 +94,77 @@ export default function App() {
             </p>
 
             {/* REJILLA DE CERTIFICADOS CON MANEJO DE HOVER DINÁMICO */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '30px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
               
-              <button 
-                onClick={() => initForm('bautizo')} 
-                onMouseEnter={() => setHoveredCard('bautizo')}
-                onMouseLeave={() => setHoveredCard(null)}
-                style={getCardStyle(hoveredCard === 'bautizo')}
-              >
+              <button onClick={() => initForm('bautizo')} onMouseEnter={() => setHoveredCard('bautizo')} onMouseLeave={() => setHoveredCard(null)} style={getCardStyle(hoveredCard === 'bautizo')}>
                 <FileText size={48} color={COLORS.gold} strokeWidth={1.1} /> 
                 CERTIFICADO DE BAUTIZO
               </button>
 
-              <button 
-                onClick={() => initForm('comunion')} 
-                onMouseEnter={() => setHoveredCard('comunion')}
-                onMouseLeave={() => setHoveredCard(null)}
-                style={getCardStyle(hoveredCard === 'comunion')}
-              >
+              <button onClick={() => initForm('comunion')} onMouseEnter={() => setHoveredCard('comunion')} onMouseLeave={() => setHoveredCard(null)} style={getCardStyle(hoveredCard === 'comunion')}>
                 <Award size={48} color={COLORS.gold} strokeWidth={1.1} /> 
                 CERTIFICADO DE PRIMERA COMUNIÓN
               </button>
 
-              <button 
-                onClick={() => initForm('confirmacion')} 
-                onMouseEnter={() => setHoveredCard('confirmacion')}
-                onMouseLeave={() => setHoveredCard(null)}
-                style={getCardStyle(hoveredCard === 'confirmacion')}
-              >
+              <button onClick={() => initForm('confirmacion')} onMouseEnter={() => setHoveredCard('confirmacion')} onMouseLeave={() => setHoveredCard(null)} style={getCardStyle(hoveredCard === 'confirmacion')}>
                 <CheckCircle size={48} color={COLORS.gold} strokeWidth={1.1} /> 
                 CERTIFICADO DE CONFIRMACIÓN
               </button>
 
-              <button 
-                onClick={() => initForm('matrimonio')} 
-                onMouseEnter={() => setHoveredCard('matrimonio')}
-                onMouseLeave={() => setHoveredCard(null)}
-                style={getCardStyle(hoveredCard === 'matrimonio')}
-              >
+              <button onClick={() => initForm('matrimonio')} onMouseEnter={() => setHoveredCard('matrimonio')} onMouseLeave={() => setHoveredCard(null)} style={getCardStyle(hoveredCard === 'matrimonio')}>
                 <Heart size={48} color={COLORS.gold} strokeWidth={1.1} /> 
                 CERTIFICADO DE MATRIMONIO
               </button>
 
             </div>
 
-            {/* SECCIÓN CARGAR ARCHIVO / BORRADOR */}
-            <input type="file" ref={fileInputRef} onChange={handleLoadJson} accept=".json" style={{ display: 'none' }} />
-            <button 
-              onClick={() => fileInputRef.current.click()}
-              onMouseEnter={() => setHoveredDraft(true)}
-              onMouseLeave={() => setHoveredDraft(false)}
-              style={getDraftButtonStyle(hoveredDraft)}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-                <FolderOpen size={24} color={COLORS.gold} strokeWidth={1.3} />
-                <div style={{ textAlign: 'left' }}>
-                  <span style={{ display: 'block', fontSize: '14px', fontWeight: 'bold', color: COLORS.brown, marginBottom: '2px' }}>
-                    ABRIR BORRADOR GUARDADO
-                  </span>
-                  <span style={{ fontSize: '12px', color: COLORS.textLight }}>
-                    Importar archivo de respaldo anterior (.json) desde el almacenamiento
-                  </span>
+            {/* ENLACES Y BOTONES OPERATIVOS INFERIORES */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              
+              {/* NUEVO BOTÓN: FORMATOS E INTENCIONES DIARIAS */}
+              <button 
+                onClick={() => setScreen('formatos')}
+                onMouseEnter={() => setHoveredFormatos(true)}
+                onMouseLeave={() => setHoveredFormatos(false)}
+                style={getDraftButtonStyle(hoveredFormatos)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+                  <CalendarDays size={24} color={COLORS.gold} strokeWidth={1.3} />
+                  <div style={{ textAlign: 'left' }}>
+                    <span style={{ display: 'block', fontSize: '14px', fontWeight: 'bold', color: COLORS.brown, marginBottom: '2px' }}>
+                      FORMATOS E INTENCIONES DIARIAS
+                    </span>
+                    <span style={{ fontSize: '12px', color: COLORS.textLight }}>
+                      Automatizar hojas del libro de intenciones y plantillas de control de solicitudes A4
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredDraft ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
-            </button>
+                <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredFormatos ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
+              </button>
+
+              {/* SECCIÓN CARGAR ARCHIVO / BORRADOR */}
+              <input type="file" ref={fileInputRef} onChange={handleLoadJson} accept=".json" style={{ display: 'none' }} />
+              <button 
+                onClick={() => fileInputRef.current.click()}
+                onMouseEnter={() => setHoveredDraft(true)}
+                onMouseLeave={() => setHoveredDraft(false)}
+                style={getDraftButtonStyle(hoveredDraft)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+                  <FolderOpen size={24} color={COLORS.gold} strokeWidth={1.3} />
+                  <div style={{ textAlign: 'left' }}>
+                    <span style={{ display: 'block', fontSize: '14px', fontWeight: 'bold', color: COLORS.brown, marginBottom: '2px' }}>
+                      ABRIR BORRADOR GUARDADO
+                    </span>
+                    <span style={{ fontSize: '12px', color: COLORS.textLight }}>
+                      Importar archivo de respaldo anterior (.json) desde el almacenamiento
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredDraft ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
+              </button>
+
+            </div>
           </div>
         )}
 
@@ -173,15 +175,66 @@ export default function App() {
         {screen === 'preview' && (
           <VistaImpresion certType={certType} formData={formData} onBack={() => setScreen('form')} />
         )}
+
+        {screen === 'formatos' && (
+          <Formatos onBack={() => setScreen('home')} />
+        )}
       </main>
 
-      {/* FOOTER CON INFORMACIÓN TÉCNICA LOCAL */}
-      <div className="no-print" style={{ backgroundColor: COLORS.brown, minHeight: '55px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', color: 'rgba(255,255,255,0.70)', fontSize: '12px', borderTop: `1px solid ${COLORS.gold}`, width: '100%', boxSizing: 'border-box' }}>
-        <div>Herramienta de Digitalización de Certificados Parroquiales — Santa Teresita</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '7px', height: '7px', backgroundColor: '#4CAF50', borderRadius: '50%' }}></div>
-          <span>Entorno Local Asegurado (Sin Internet)</span>
+      {/* FOOTER PREMIUM CON FIRMA CORREGIDA Y DISEÑO GLASSMORPHISM */}
+      <div className="no-print" style={{ backgroundColor: COLORS.brown, padding: '24px 40px', color: 'rgba(255,255,255,0.70)', fontSize: '12px', borderTop: `1px solid rgba(196, 158, 101, 0.25)`, width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+          <div>
+            <b style={{ color: '#FFF' }}>Herramienta de Digitalización de Certificados Parroquiales</b> — Parroquia Santa Teresita
+          </div>
+          
+          {/* Contenedor Interactivo de tu Firma Estilizada */}
+          <div 
+            onMouseEnter={() => setHoveredFooterLogo(true)}
+            onMouseLeave={() => setHoveredFooterLogo(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              fontSize: '11px',
+              color: 'rgba(255, 255, 255, 0.65)',
+              backgroundColor: hoveredFooterLogo ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.04)',
+              padding: '6px 14px',
+              borderRadius: '8px',
+              border: hoveredFooterLogo ? `1px solid ${COLORS.gold}` : '1px solid rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(4px)',
+              transform: hoveredFooterLogo ? 'translateY(-1px)' : 'none',
+              boxShadow: hoveredFooterLogo ? '0 4px 12px rgba(196, 158, 101, 0.15)' : 'none',
+              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+              cursor: 'default'
+            }}
+          >
+            <span>Desarrollado por</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderLeft: '1px solid rgba(255,255,255,0.15)', paddingLeft: '8px' }}>
+              <img 
+                src="/personal_monotipo1.png" 
+                alt="Logo personal" 
+                style={{ 
+                  height: '18px', 
+                  width: 'auto', 
+                  objectFit: 'contain',
+                  filter: hoveredFooterLogo ? 'drop-shadow(0 0 4px rgba(196, 158, 101, 0.5))' : 'none',
+                  transition: 'filter 0.25s ease'
+                }} 
+              />
+              <span style={{ 
+                color: COLORS.gold, 
+                fontWeight: '700', 
+                fontFamily: "'Segoe UI', Roboto, sans-serif", 
+                letterSpacing: '0.8px',
+                fontSize: '12px'
+              }}>
+                
+              </span>
+            </div>
+          </div>
         </div>
+
       </div>
 
       <style>{`
@@ -194,7 +247,7 @@ export default function App() {
   );
 }
 
-// FUNCIONES DINÁMICAS DE ESTILOS PARA GESTIONAR EL HOVER SIN DEPENDER DE CSS EXTERNO
+// FUNCIONES DINÁMICAS DE ESTILOS
 const getCardStyle = (isHovered) => ({
   backgroundColor: '#FFFFFF',
   border: `1px solid ${COLORS.border}`,
