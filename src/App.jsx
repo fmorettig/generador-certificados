@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react';
-import { FileText, Award, Heart, CheckCircle, FolderOpen, ChevronRight, CalendarDays } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { FileText, Award, Heart, CheckCircle, ChevronRight, CalendarDays, History } from 'lucide-react';
 import Formulario from './components/Formulario';
 import VistaImpresion from './components/VistaImpresion';
-import Formatos from './components/Formatos'; // Importamos el nuevo componente
+import Formatos from './components/Formatos';
+import Historial from './components/Historial';
 
 const COLORS = {
   brown: '#603828',
@@ -18,24 +19,40 @@ export default function App() {
   const [screen, setScreen] = useState('home'); 
   const [certType, setCertType] = useState(''); 
   const [formData, setFormData] = useState({});
-  const [hoveredCard, setHoveredCard] = useState(null);
-  const [hoveredDraft, setHoveredDraft] = useState(false);
-  const [hoveredFormatos, setHoveredFormatos] = useState(false);
-  const [hoveredFooterLogo, setHoveredFooterLogo] = useState(false); // Estado para el hover de tu firma
-  const fileInputRef = useRef(null);
+  const [historial, setHistorial] = useState([]);
 
+  const [hoveredCard, setHoveredCard] = useState(null);
+  const [hoveredHistorial, setHoveredHistorial] = useState(false);
+  const [hoveredFormatos, setHoveredFormatos] = useState(false);
+  const [hoveredFooterLogo, setHoveredFooterLogo] = useState(false);
+
+  // Cargar historial desde localStorage al montar la app
+  useEffect(() => {
+    const guardados = localStorage.getItem('historial_certificados');
+    if (guardados) {
+      try {
+        setHistorial(JSON.parse(guardados));
+      } catch (e) {
+        console.error('Error al cargar historial:', e);
+      }
+    }
+  }, []);
+
+  // Inicializar un formulario con ID único
   const initForm = (type) => {
     setCertType(type);
     const fechaHoy = new Date().toISOString().split('T')[0];
     
     setFormData({
-      nombres: '', fechaSacramento: '', celebrante: '', libro: '', folio: '', partida: '', observaciones: '',
+      id: Date.now().toString(), // ID Único para evitar duplicados
+      nombres: '', bautizadoNombre: '', bautizadoLugarNac: '', bautizadoFechaNac: '', bautizadoEdad: '',
+      fechaSacramento: '', celebrante: '', ministro: '', libro: '', folio: '', partida: '', observaciones: '',
       lugarSacramento: 'Parroquia Sta. Teresita del Niño Jesús',
       motivo: '',
       fechaExpedicion: fechaHoy,
       esposoNombre: '', esposoEdad: '', esposoEstadoCivil: 'Soltero', esposoNaturalDe: '', esposoVecinoDe: '', esposoPadre: '', esposoMadre: '',
-      espesaNombre: '', esposaEdad: '', esposaEstadoCivil: 'Soltera', esposaNaturalDe: '', esposaVecinaDe: '', esposaPadre: '', esposaMadre: '',
-      padrino: '', madrina: '', ministro: '',
+      esposaNombre: '', esposaEdad: '', esposaEstadoCivil: 'Soltera', esposaNaturalDe: '', esposaVecinaDe: '', esposaPadre: '', esposaMadre: '',
+      padrino: '', madrina: '',
       civilActa: '', civilFecha: '', civilMunicipio: '', civilEstado: '',
       tecnicoMun: '', tecnicoAnio: ''
     });
@@ -47,22 +64,52 @@ export default function App() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleLoadJson = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const parsedData = JSON.parse(event.target.result);
-        setCertType(parsedData.certType);
-        setFormData(parsedData.formData);
-        setScreen('form');
-      } catch (error) { 
-        alert('Error al leer el archivo .json legislado'); 
-      }
+  // Guardar o Actualizar en Historial (Anti-duplicación)
+  const guardarEnHistorial = (datosActuales, tipoActual) => {
+    const itemGuardar = {
+      id: datosActuales.id || Date.now().toString(),
+      certType: tipoActual,
+      formData: datosActuales,
+      fechaGuardado: new Date().toISOString()
     };
-    reader.readAsText(file);
-    e.target.value = '';
+
+    setHistorial((prev) => {
+      const existeIndex = prev.findIndex((item) => item.id === itemGuardar.id);
+      let nuevoHistorial = [...prev];
+
+      if (existeIndex >= 0) {
+        // Reemplaza el registro previo si ya existía
+        nuevoHistorial[existeIndex] = itemGuardar;
+      } else {
+        // Inserta como nuevo si no existía
+        nuevoHistorial.unshift(itemGuardar);
+      }
+
+      localStorage.setItem('historial_certificados', JSON.stringify(nuevoHistorial));
+      return nuevoHistorial;
+    });
+  };
+
+  // Cargar elemento seleccionado desde el componente Historial
+  const handleCargarDesdeHistorial = (item) => {
+    setCertType(item.certType);
+    setFormData(item.formData);
+    setScreen('preview');
+  };
+
+  // Eliminar un item específico del historial
+  const handleEliminarItem = (id) => {
+    const filtrado = historial.filter((i) => i.id !== id);
+    setHistorial(filtrado);
+    localStorage.setItem('historial_certificados', JSON.stringify(filtrado));
+  };
+
+  // Vaciar todo el historial
+  const handleVaciarHistorial = () => {
+    if (window.confirm('¿Está seguro de que desea vaciar todo el historial de certificados guardados?')) {
+      setHistorial([]);
+      localStorage.removeItem('historial_certificados');
+    }
   };
 
   return (
@@ -90,7 +137,7 @@ export default function App() {
               Registro Parroquial
             </h1>
             <p style={{ color: COLORS.textLight, fontSize: '15px', marginBottom: '40px' }}>
-              Seleccione el tipo de documento eclesiástico que desea emitir o cargar
+              Seleccione el tipo de documento eclesiástico que desea emitir o consultar
             </p>
 
             {/* REJILLA DE CERTIFICADOS CON MANEJO DE HOVER DINÁMICO */}
@@ -121,7 +168,7 @@ export default function App() {
             {/* ENLACES Y BOTONES OPERATIVOS INFERIORES */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               
-              {/* NUEVO BOTÓN: FORMATOS E INTENCIONES DIARIAS */}
+              {/* BOTÓN: FORMATOS E INTENCIONES DIARIAS */}
               <button 
                 onClick={() => setScreen('formatos')}
                 onMouseEnter={() => setHoveredFormatos(true)}
@@ -142,26 +189,25 @@ export default function App() {
                 <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredFormatos ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
               </button>
 
-              {/* SECCIÓN CARGAR ARCHIVO / BORRADOR */}
-              <input type="file" ref={fileInputRef} onChange={handleLoadJson} accept=".json" style={{ display: 'none' }} />
+              {/* NUEVO BOTÓN: HISTORIAL DE CERTIFICADOS GUARDADOS */}
               <button 
-                onClick={() => fileInputRef.current.click()}
-                onMouseEnter={() => setHoveredDraft(true)}
-                onMouseLeave={() => setHoveredDraft(false)}
-                style={getDraftButtonStyle(hoveredDraft)}
+                onClick={() => setScreen('historial')}
+                onMouseEnter={() => setHoveredHistorial(true)}
+                onMouseLeave={() => setHoveredHistorial(false)}
+                style={getDraftButtonStyle(hoveredHistorial)}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-                  <FolderOpen size={24} color={COLORS.gold} strokeWidth={1.3} />
+                  <History size={24} color={COLORS.gold} strokeWidth={1.3} />
                   <div style={{ textAlign: 'left' }}>
                     <span style={{ display: 'block', fontSize: '14px', fontWeight: 'bold', color: COLORS.brown, marginBottom: '2px' }}>
-                      ABRIR BORRADOR GUARDADO
+                      HISTORIAL DE CERTIFICADOS ({historial.length})
                     </span>
                     <span style={{ fontSize: '12px', color: COLORS.textLight }}>
-                      Importar archivo de respaldo anterior (.json) desde el almacenamiento
+                      Consulte y reabra actas generadas previamente guardadas localmente en este dispositivo
                     </span>
                   </div>
                 </div>
-                <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredDraft ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
+                <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredHistorial ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
               </button>
 
             </div>
@@ -169,15 +215,42 @@ export default function App() {
         )}
 
         {screen === 'form' && (
-          <Formulario certType={certType} formData={formData} onChange={handleInputChange} onBack={() => setScreen('home')} onPreview={() => setScreen('preview')} />
+          <Formulario 
+            certType={certType} 
+            formData={formData} 
+            onChange={handleInputChange} 
+            onBack={() => setScreen('home')} 
+            onPreview={() => {
+              guardarEnHistorial(formData, certType); // Guarda/Actualiza al ir a Vista Previa
+              setScreen('preview');
+            }} 
+          />
         )}
 
         {screen === 'preview' && (
-          <VistaImpresion certType={certType} formData={formData} onBack={() => setScreen('form')} />
+          <VistaImpresion 
+            certType={certType} 
+            formData={formData} 
+            onBack={() => setScreen('form')} 
+            onPrint={() => {
+              guardarEnHistorial(formData, certType); // Guarda/Actualiza al dar clic en Imprimir
+              window.print();
+            }}
+          />
         )}
 
         {screen === 'formatos' && (
           <Formatos onBack={() => setScreen('home')} />
+        )}
+
+        {screen === 'historial' && (
+          <Historial 
+            historial={historial}
+            onCargar={handleCargarDesdeHistorial}
+            onEliminar={handleEliminarItem}
+            onVaciar={handleVaciarHistorial}
+            onVolver={() => setScreen('home')}
+          />
         )}
       </main>
 
@@ -249,7 +322,7 @@ export default function App() {
 
 // FUNCIONES DINÁMICAS DE ESTILOS
 const getCardStyle = (isHovered) => ({
-  backgroundColor: '#FFFFFF',
+  backgroundColor: isHovered ? COLORS.hoverBg : '#FFFFFF',
   border: `1px solid ${COLORS.border}`,
   borderRadius: '12px',
   padding: '45px 25px',
@@ -264,7 +337,6 @@ const getCardStyle = (isHovered) => ({
   letterSpacing: '0.6px',
   boxShadow: isHovered ? '0 5px 15px rgba(96, 56, 40, 0.08)' : '0 2px 4px rgba(0,0,0,0.02)',
   transform: isHovered ? 'translateY(-2px)' : 'none',
-  backgroundColor: isHovered ? COLORS.hoverBg : '#FFFFFF',
   transition: 'all 0.25s ease',
   outline: 'none'
 });
@@ -277,7 +349,7 @@ const getDraftButtonStyle = (isHovered) => ({
   padding: '22px 28px',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between',
+  justify: 'space-between',
   cursor: 'pointer',
   boxShadow: isHovered ? '0 4px 12px rgba(96, 56, 40, 0.05)' : 'none',
   transition: 'all 0.2s ease',
