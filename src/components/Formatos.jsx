@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 const COLORS = { brown: '#603828', gold: '#C49E65', cream: '#FAF6F0', white: '#FFFFFF', border: '#E6DFD5', text: '#333333' };
 
 export default function Formatos({ onBack }) {
-  const [activeTab, setActiveTab] = useState('menu'); // 'menu', 'print-intenciones', 'print-solicitudes'
-  const [selectedFormat, setSelectedFormat] = useState('intenciones'); // 'intenciones', 'solicitudes'
+  const [activeTab, setActiveTab] = useState('menu');
+  const [selectedFormat, setSelectedFormat] = useState('intenciones');
   const [showConfig, setShowConfig] = useState(false);
+  const [numControl, setNumControl] = useState('');
   
   // Configuración de Horarios
   const [horarios, setHorarios] = useState({
@@ -102,7 +103,7 @@ export default function Formatos({ onBack }) {
   };
 
   const paginasAIprimir = generarPaginasImpresion();
-  const filasDeTabla = Array.from({ length: 24 });
+  const filasDeTabla = Array.from({ length: 28 });
 
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -151,9 +152,9 @@ export default function Formatos({ onBack }) {
               <b style={{ display: 'block', color: COLORS.brown, fontSize: '14px' }}>Libro de Intenciones Diarias</b>
               <span style={{ fontSize: '12px', color: '#666' }}>Genera las hojas diarias para intenciones de difuntos, acción de gracias y balance de colecta.</span>
             </div>
-            <div onClick={() => setSelectedFormat('solicitudes')} style={{ flex: 1, padding: '20px', borderRadius: '8px', border: `2px solid ${selectedFormat === 'solicitudes' ? COLORS.border : COLORS.brown}`, backgroundColor: selectedFormat === 'solicitudes' ? COLORS.cream : '#fff', cursor: 'pointer', transition: '0.2s' }}>
-              <b style={{ display: 'block', color: COLORS.brown, fontSize: '14px' }}>Control de Solicitudes (Carta Horizontal)</b>
-              <span style={{ fontSize: '12px', color: '#666' }}>Formato impreso horizontal para seguimiento.</span>
+            <div onClick={() => setSelectedFormat('solicitudes')} style={{ flex: 1, padding: '20px', borderRadius: '8px', border: `2px solid ${selectedFormat === 'solicitudes' ? COLORS.brown : COLORS.border}`, backgroundColor: selectedFormat === 'solicitudes' ? COLORS.cream : '#fff', cursor: 'pointer', transition: '0.2s' }}>
+              <b style={{ display: 'block', color: COLORS.brown, fontSize: '14px' }}>Control de Solicitudes</b>
+              <span style={{ fontSize: '12px', color: '#666' }}>Formato impreso horizontal de 15 filas con correlativo y control numérico.</span>
             </div>
           </div>
 
@@ -215,9 +216,21 @@ export default function Formatos({ onBack }) {
           ) : (
             <div style={{ textAlign: 'center', padding: '30px', backgroundColor: COLORS.cream, borderRadius: '8px', border: `1px solid ${COLORS.border}` }}>
               <h3 style={{ margin: '0 0 10px 0', color: COLORS.brown, fontFamily: "'Georgia', serif" }}>Formato Único de Control Parroquial</h3>
-              <p style={{ fontSize: '13px', color: '#666', maxWidth: '500px', margin: '0 auto 20px auto' }}>
-                Este formato genera una plantilla limpia en tamaño Carta Horizontal optimizada para el despacho, estructurada únicamente con líneas de tablas y bloques de dos columnas.
+              <p style={{ fontSize: '13px', color: '#666', maxWidth: '520px', margin: '0 auto 15px auto' }}>
+                Este formato genera una planilla limpia optimizada para el despacho, con las 11 columnas exactas y espacio para N° de Control.
               </p>
+              
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', color: COLORS.brown }}>N° Control (opcional):</label>
+                <input 
+                  type="text" 
+                  placeholder="Ej: 001"
+                  value={numControl}
+                  onChange={(e) => setNumControl(e.target.value)}
+                  style={{ padding: '6px 12px', borderRadius: '4px', border: `1px solid ${COLORS.border}`, fontSize: '12px', width: '110px', textAlign: 'center' }}
+                />
+              </div>
+
               <button onClick={() => setActiveTab('print-solicitudes')} style={{ ...btnPrincipal, maxWidth: '280px', margin: '0 auto' }}>
                 GENERAR VISTA PREVIA →
               </button>
@@ -232,29 +245,29 @@ export default function Formatos({ onBack }) {
       {/* ========================================== */}
       {activeTab === 'print-intenciones' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-          <div className="no-print" style={{ width: '21.59cm', display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <div className="no-print" style={{ width: '100%', maxWidth: '800px', display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
             <button onClick={() => setActiveTab('menu')} style={btnSecundario}>← VOLVER AL ASISTENTE</button>
             <button onClick={() => window.print()} style={btnPrincipal}>IMPRIMIR TODAS LAS HOJAS ({paginasAIprimir.length})</button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', width: '100%', maxWidth: '800px' }}>
             {paginasAIprimir.map((pag, index) => (
-              <div key={index} className="print-page layout-letter" style={sheetContainerLetter}>
+              <div key={index} className="print-page sheet-intenciones" style={sheetContainer}>
                 
                 {/* Membrete Oficial */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #603828', paddingBottom: '6px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                    <img src="/stateresita.png" style={{ height: '75px', width: 'auto' }} alt="Logo" />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #603828', paddingBottom: '2px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <img src="/stateresita.png" style={{ height: '55px', width: 'auto' }} alt="Logo" />
                     <div>
                       <h4 style={{ margin: 0, fontSize: '11px', color: COLORS.brown, fontWeight: 'bold', letterSpacing: '0.5px' }}>PARROQUIA SANTA TERESITA DEL NIÑO JESÚS</h4>
                       <p style={{ margin: 0, fontSize: '9px', color: '#666', fontStyle: 'italic' }}>Urb. del Este - Barquisimeto - Edo. Lara</p>
                     </div>
                   </div>
-                  <h2 style={{ margin: 0, fontSize: '20px', fontFamily: "'Georgia', serif", fontWeight: 'bold', color: COLORS.brown, letterSpacing: '1px' }}>INTENCIONES DEL DÍA</h2>
+                  <h2 style={{ margin: 0, fontSize: '17px', fontFamily: "'Georgia', serif", fontWeight: 'bold', color: COLORS.brown, letterSpacing: '1px' }}>INTENCIONES DEL DÍA</h2>
                 </div>
 
                 {/* Sub-encabezado Variable con Fecha y Hora */}
-                <div style={{ textAlign: 'center', margin: '12px 0', fontSize: '14px', color: COLORS.brown, display: 'flex', justifyContent: 'center', gap: '5px', alignItems: 'center' }}>
+                <div style={{ textAlign: 'center', margin: '4px 0', fontSize: '11.5px', color: COLORS.brown, display: 'flex', justifyContent: 'center', gap: '5px', alignItems: 'center' }}>
                   <span>Fecha:</span>
                   <span style={{ fontFamily: "'Georgia', serif", fontStyle: 'italic', borderBottom: '1px solid #000', padding: '0 15px', fontWeight: 'bold' }}>
                     {formatearFechaLarga(pag.fecha)} {pag.hora ? ` — Misa: ${pag.hora}` : ''}
@@ -262,70 +275,82 @@ export default function Formatos({ onBack }) {
                 </div>
 
                 {/* Tablas Estructuradas en Paralelo */}
-                <div style={{ display: 'flex', gap: '20px', flex: 1, width: '100%', alignItems: 'stretch' }}>
+                <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
                   
-                  {/* SECCIÓN 1: DIFUNTOS */}
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <table style={tableStyle}>
-                      <thead>
-                        <tr>
-                          <th colSpan="2" style={tableHeaderBrown}>DIFUNTOS</th>
-                        </tr>
-                        <tr style={subHeaderRowStyle}>
-                          <th style={leftHeaderStyle}>Intención</th>
-                          <th style={rightHeaderStyle}>Observaciones</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filasDeTabla.map((_, rIdx) => (
-                          <tr key={rIdx} style={tableRowStyle}>
-                            <td style={leftCellStyle}></td>
-                            <td style={rightCellStyle}></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+{/* SECCIÓN 1: DIFUNTOS */}
+<div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', backgroundColor: '#FFFDF9', border: '1px solid #C49E65' }}>
+    {/* COLGROUP GARANTIZA EL ANCHO EXACTO DE 75% Y 25% */}
+    <colgroup>
+      <col style={{ width: '75%' }} />
+      <col style={{ width: '25%' }} />
+    </colgroup>
+    <thead>
+      <tr>
+        <th colSpan="2" style={{ backgroundColor: '#603828', color: '#fff', fontSize: '13px', fontWeight: 'bold', padding: '6px 4px', textAlign: 'center', letterSpacing: '1px' }}>
+          DIFUNTOS
+        </th>
+      </tr>
+      <tr style={{ borderBottom: '1px solid #C49E65', backgroundColor: '#FAF6F0' }}>
+        <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center', borderRight: '1px solid #C49E65' }}>INTENCION</th>
+        <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center' }}>OBSERVACIONES</th>
+      </tr>
+    </thead>
+    <tbody>
+      {filasDeTabla.map((_, rIdx) => (
+        <tr key={rIdx} style={{ height: '28px', borderBottom: '1px solid #C49E65' }}>
+          <td style={{ borderRight: '1px solid #C49E65', padding: 0 }}></td>
+          <td style={{ padding: 0 }}></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
 
-                  {/* SECCIÓN 2: ACCIÓN DE GRACIAS */}
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <table style={tableStyle}>
-                      <thead>
-                        <tr>
-                          <th colSpan="2" style={tableHeaderBrown}>ACCIÓN DE GRACIAS</th>
-                        </tr>
-                        <tr style={subHeaderRowStyle}>
-                          <th style={leftHeaderStyle}>Intención</th>
-                          <th style={rightHeaderStyle}>Observaciones</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filasDeTabla.map((_, rIdx) => (
-                          <tr key={rIdx} style={tableRowStyle}>
-                            <td style={leftCellStyle}></td>
-                            <td style={rightCellStyle}></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
+{/* SECCIÓN 2: ACCIÓN DE GRACIAS */}
+<div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', backgroundColor: '#FFFDF9', border: '1px solid #C49E65' }}>
+    {/* COLGROUP GARANTIZA EL ANCHO EXACTO DE 75% Y 25% */}
+    <colgroup>
+      <col style={{ width: '75%' }} />
+      <col style={{ width: '25%' }} />
+    </colgroup>
+    <thead>
+      <tr>
+        <th colSpan="2" style={{ backgroundColor: '#603828', color: '#fff', fontSize: '13px', fontWeight: 'bold', padding: '6px 4px', textAlign: 'center', letterSpacing: '1px' }}>
+          ACCIÓN DE GRACIAS
+        </th>
+      </tr>
+      <tr style={{ borderBottom: '1px solid #C49E65', backgroundColor: '#FAF6F0' }}>
+        <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center', borderRight: '1px solid #C49E65' }}>INTENCION</th>
+        <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center' }}>OBSERVACIONES</th>
+      </tr>
+    </thead>
+    <tbody>
+      {filasDeTabla.map((_, rIdx) => (
+        <tr key={rIdx} style={{ height: '28px', borderBottom: '1px solid #C49E65' }}>
+          <td style={{ borderRight: '1px solid #C49E65', padding: 0 }}></td>
+          <td style={{ padding: 0 }}></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
                 </div>
 
                 {/* Sección de Cierre: Colecta, Observaciones*/}
-                <div style={{ border: '1.5px solid #C49E65', borderRadius: '6px', padding: '10px 15px', marginTop: '12px', position: 'relative' }}>
-                  <div style={{ textAlign: 'center', fontSize: '10px', fontWeight: 'bold', color: COLORS.brown, textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.5px' }}>
+                <div style={{ border: '1.5px solid #C49E65', borderRadius: '6px', padding: '5px 12px', marginTop: '6px' }}>
+                  <div style={{ textAlign: 'center', fontSize: '8.5px', fontWeight: 'bold', color: COLORS.brown, textTransform: 'uppercase', marginBottom: '2px', letterSpacing: '0.5px' }}>
                     ✦ TOTAL DE LA COLECTA ✦
                   </div>
-                  <div style={{ display: 'flex', gap: '30px', alignItems: 'center', marginBottom: '5px' }}>
-                    <div style={{ flex: 1, fontSize: '12px', fontWeight: 'bold' }}>
-                      Total de la colecta: &nbsp;$ <span style={{ borderBottom: '1px dashed #000', width: '70%', display: 'inline-block' }}></span>
+                  <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                    <div style={{ flex: 1, fontSize: '10px', fontWeight: 'bold' }}>
+                      Total colecta: &nbsp;$ <span style={{ borderBottom: '1px dashed #000', width: '60%', display: 'inline-block' }}></span>
                     </div>
-                    <div style={{ flex: 2, fontSize: '11px' }}>
-                      Observaciones: <span style={{ borderBottom: '1px dashed #000', width: '75%', display: 'inline-block', height: '14px' }}></span>
+                    <div style={{ flex: 2, fontSize: '9.5px' }}>
+                      Observaciones: <span style={{ borderBottom: '1px dashed #000', width: '70%', display: 'inline-block', height: '11px' }}></span>
                     </div>
                   </div>
-                  
                 </div>
 
               </div>
@@ -339,93 +364,119 @@ export default function Formatos({ onBack }) {
       {/* ========================================== */}
       {activeTab === 'print-solicitudes' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-          <div className="no-print" style={{ width: '27.94cm', display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <div className="no-print" style={{ width: '100%', maxWidth: '1000px', display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
             <button onClick={() => setActiveTab('menu')} style={btnSecundario}>← VOLVER AL ASISTENTE</button>
-            <button onClick={() => window.print()} style={btnPrincipal}>IMPRIMIR HOJA CONTROL (CARTA LANDSCAPE)</button>
+            <button onClick={() => window.print()} style={btnPrincipal}>IMPRIMIR HOJA CONTROL</button>
           </div>
 
-          <div className="print-page layout-letter-landscape" style={sheetContainerLetterLandscape}>
+          <div className="print-page" style={{ ...sheetContainer, maxWidth: '1000px' }}>
             
-            {/* Encabezado Principal */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #603828', paddingBottom: '8px', marginBottom: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                <img src="/stateresita.png" style={{ height: '75px', width: 'auto' }} alt="Logo" />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #603828', paddingBottom: '6px', marginBottom: '6px' }}>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '33%' }}>
+                <img src="/stateresita.png" style={{ height: '50px', width: 'auto' }} alt="Logo" />
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '11px', color: COLORS.brown, fontWeight: 'bold' }}>PARROQUIA</h3>
-                  <h2 style={{ margin: 0, fontSize: '15px', color: COLORS.brown, fontWeight: 'bold', fontFamily: "'Georgia', serif" }}>STA. TERESITA DEL NIÑO JESÚS</h2>
+                  <h3 style={{ margin: 0, fontSize: '10px', color: COLORS.brown, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>PARROQUIA</h3>
+                  <h2 style={{ margin: 0, fontSize: '12px', color: COLORS.brown, fontWeight: 'bold', fontFamily: "'Georgia', serif" }}>STA. TERESITA DEL NIÑO JESÚS</h2>
+                  <p style={{ margin: 0, fontSize: '8.5px', color: '#666', fontStyle: 'italic' }}>Barquisimeto - Edo. Lara</p>
                 </div>
               </div>
-              <h1 style={{ margin: 0, fontSize: '20px', fontFamily: "'Georgia', serif", color: COLORS.brown, letterSpacing: '0.5px', fontWeight: 'bold' }}>
-                CONTROL DE SOLICITUDES DE CERTIFICADOS
-              </h1>
-              <div style={{ fontSize: '12px' }}>
+
+              <div style={{ textAlign: 'center', width: '42%' }}>
+                <h1 style={{ margin: 0, fontSize: '15px', fontFamily: "'Georgia', serif", color: COLORS.brown, letterSpacing: '0.5px', fontWeight: 'bold' }}>
+                  CONTROL DE SOLICITUDES DE CERTIFICADOS
+                </h1>
               </div>
+
+              <div style={{ width: '20%', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                <div style={{ border: '1.5px solid #603828', borderRadius: '4px', padding: '2px 8px', backgroundColor: '#FAF6F0', textAlign: 'center', minWidth: '90px' }}>
+                  <div style={{ fontSize: '8px', fontWeight: 'bold', color: COLORS.brown, textTransform: 'uppercase', letterSpacing: '0.5px' }}>N° CONTROL</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#000', fontFamily: 'monospace', minHeight: '13px', paddingTop: '1px' }}>
+                    {numControl || '______'}
+                  </div>
+                </div>
+              </div>
+
             </div>
 
-            {/* Gran Tabla de Control Operativo */}
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '8.5px', tableLayout: 'fixed' }}>
               <thead>
                 <tr style={{ backgroundColor: '#603828', color: '#FFFFFF', textAlign: 'center' }}>
-                  <th style={thControl}>N°</th>
-                  <th style={thControl}>FECHA DE SOLICITUD</th>
-                  <th style={thControl}>NOMBRE DEL SOLICITANTE</th>
-                  <th style={thControl}>INFORMACIÓN ADICIONAL</th>
-                  <th style={thControl}>TIPO DE CERTIFICADO</th>
-                  <th style={thControl}>DATOS DE CONTACTO (Nombre y Teléfono)</th>
-                  <th style={thControl}>LISTO</th>
-                  <th style={thControl}>ENTREGADO</th>
-                  <th style={thControl}>FECHA DE ENTREGA</th>
+                  <th style={{ ...thControl, width: '3%' }}>N°</th>
+                  <th style={{ ...thControl, width: '9%' }}>FECHA SOLICITUD</th>
+                  <th style={{ ...thControl, width: '16%' }}>NOMBRE SOLICITANTE</th>
+                  <th style={{ ...thControl, width: '12%' }}>TIPO CERTIFICADO</th>
+                  <th style={{ ...thControl, width: '16%' }}>INFORMACIÓN ADICIONAL</th>
+                  <th style={{ ...thControl, width: '12%' }}>DATOS CONTACTO</th>
+                  <th style={{ ...thControl, width: '5%' }}>PAGO</th>
+                  <th style={{ ...thControl, width: '7%' }}>REF</th>
+                  <th style={{ ...thControl, width: '5%' }}>ENTREGADO</th>
+                  <th style={{ ...thControl, width: '8%' }}>FECHA ENTREGA</th>
+                  <th style={{ ...thControl, width: '7%' }}>OBSERVACIÓN</th>
                 </tr>
               </thead>
               <tbody>
                 {[...Array(15)].map((_, idx) => (
-                  <tr key={idx} style={{ height: '28px' }}>
-                    <td style={{ ...tdControl, textAlign: 'center', fontWeight: 'bold', backgroundColor: '#FAF6F0' }}>{idx + 1}</td>
+                  <tr key={idx} style={{ height: '38px' }}>
+                    <td style={{ ...tdControl, textAlign: 'center', fontWeight: 'bold', backgroundColor: '#FAF6F0', color: COLORS.brown }}>{idx + 1}</td>
+                    <td style={{ ...tdControl, textAlign: 'center', color: '#999', fontSize: '8px' }}>___/___/___</td>
                     <td style={tdControl}></td>
                     <td style={tdControl}></td>
-                    <td style={{ ...tdControl, padding: '1px 5px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                        <div style={{ borderBottom: '1px solid #E6DFD5', height: '5px' }}></div>
-                        <div style={{ borderBottom: '1px solid #E6DFD5', height: '5px' }}></div>
-                        <div style={{ borderBottom: '1px solid #E6DFD5', height: '5px' }}></div>
+                    <td style={{ ...tdControl, padding: '1px 4px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', justifyContent: 'center', height: '100%' }}>
+                        <div style={{ borderBottom: '1px dashed #E6DFD5' }}></div>
+                        <div style={{ borderBottom: '1px dashed #E6DFD5' }}></div>
                       </div>
                     </td>
                     <td style={tdControl}></td>
+                    <td style={{ ...tdControl, textAlign: 'center' }}><div style={checkBoxSimulate}></div></td>
                     <td style={tdControl}></td>
                     <td style={{ ...tdControl, textAlign: 'center' }}><div style={checkBoxSimulate}></div></td>
-                    <td style={{ ...tdControl, textAlign: 'center' }}><div style={checkBoxSimulate}></div></td>
                     <td style={{ ...tdControl, textAlign: 'center', color: '#999', fontSize: '8px' }}>___/___/___</td>
+                    <td style={tdControl}></td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
-            {/* Pie de Página Explicativo y Firma */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px', borderTop: '1px solid #C49E65', paddingTop: '6px' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', width: '100%' }}>
-                <span style={{ color: COLORS.gold }}>⚜</span>
-                <p style={{ margin: 0, fontSize: '9px', fontStyle: 'italic', color: COLORS.brown, textAlign: 'center' }}>
-                  Formato operativo de control para el despacho. Rellene manualmente los campos, marque el estado de entrega y archive para el balance.
-                </p>
-                <span style={{ color: COLORS.gold }}>⚜</span>
-              </div>
-              
-
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '5px', borderTop: '1px solid #C49E65', paddingTop: '3px' }}>
+              <span style={{ color: COLORS.gold, fontSize: '8px' }}>⚜</span>
+              <p style={{ margin: '0 6px', fontSize: '8px', fontStyle: 'italic', color: COLORS.brown, textAlign: 'center' }}>
+                Formato operativo para el despacho parroquial. Complete manualmente los datos, indique la referencia de pago y marque al momento de la entrega.
+              </p>
+              <span style={{ color: COLORS.gold, fontSize: '8px' }}>⚜</span>
             </div>
 
           </div>
         </div>
       )}
 
-      {/* Reglas de Estilos de Impresión CSS */}
+      {/* Reglas de Estilos de Impresión */}
       <style>{`
-        @page { margin: 0mm !important; }
+        @page {
+          margin: 0.3cm;
+        }
         @media print {
-          html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+          html, body { 
+            background: #fff !important; 
+            margin: 0 !important; 
+            padding: 0 !important;
+          }
           .no-print { display: none !important; }
-          .print-page { border: none !important; box-shadow: none !important; margin: 0 auto !important; page-break-after: always !important; page-break-inside: avoid !important; }
-          .layout-letter { width: 21.59cm !important; height: 27.94cm !important; padding: 1.2cm 1.0cm !important; }
-          .layout-letter-landscape { width: 27.94cm !important; height: 21.59cm !important; padding: 1.0cm !important; }
+          .print-page { 
+            border: none !important; 
+            box-shadow: none !important; 
+            margin: 0 auto !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            page-break-after: always;
+          }
+          .sheet-intenciones {
+            padding-top: 0px !important;
+          }
         }
       `}</style>
 
@@ -433,16 +484,26 @@ export default function Formatos({ onBack }) {
   );
 }
 
-// Estilos de los botones del menú superior
+// Estilos de los botones
 const btnArrow = { backgroundColor: '#603828', color: 'white', border: 'none', width: '28px', height: '28px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' };
 const btnPrincipal = { backgroundColor: '#603828', color: 'white', border: 'none', padding: '12px 20px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', width: '100%', fontSize: '13px' };
 const btnSecundario = { backgroundColor: '#fff', color: '#603828', border: '1px solid #E6DFD5', padding: '10px 15px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' };
 
-// Contenedores de las Hojas de Impresión
-const sheetContainerLetter = { width: '21.59cm', height: '27.94cm', backgroundColor: '#FFFFFF', border: '1px solid #E6DFD5', padding: '1.2cm 1.0cm', boxSizing: 'border-box', position: 'relative', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' };
-const sheetContainerLetterLandscape = { width: '27.94cm', height: '21.59cm', backgroundColor: '#FFFFFF', border: '1px solid #E6DFD5', padding: '1.0cm', boxSizing: 'border-box', position: 'relative', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' };
+// Contenedor de Hojas
+const sheetContainer = { 
+  width: '100%', 
+  backgroundColor: '#FFFFFF', 
+  border: '1px solid #E6DFD5', 
+  padding: '10px 18px', 
+  boxSizing: 'border-box', 
+  position: 'relative', 
+  display: 'flex', 
+  flexDirection: 'column', 
+  justifyContent: 'space-between', 
+  boxShadow: '0 4px 15px rgba(0,0,0,0.05)' 
+};
 
-// ESTILOS DE LA TABLA COMPLETA
+// ESTILOS DE LA TABLA INTENCIONES
 const tableStyle = {
   width: '100%',
   borderCollapse: 'collapse',
@@ -453,15 +514,24 @@ const tableStyle = {
   tableLayout: 'fixed'
 };
 
-const tableHeaderBrown = { backgroundColor: '#603828', color: '#fff', fontSize: '11px', fontWeight: 'bold', padding: '6px', textAlign: 'center', letterSpacing: '0.5px' };
+const tableHeaderBrown = { 
+  backgroundColor: '#603828', 
+  color: '#fff', 
+  fontSize: '13px', 
+  fontWeight: 'bold', 
+  padding: '6px 4px', 
+  textAlign: 'center', 
+  letterSpacing: '1px' 
+};
 
 const subHeaderRowStyle = {
   borderBottom: '1px solid #C49E65',
   backgroundColor: '#FAF6F0'
 };
 
-const leftHeaderStyle = { width: '70%', fontSize: '10px', fontWeight: 'bold', color: '#603828', padding: '5px', textAlign: 'center', borderRight: '1px solid #C49E65' };
-const rightHeaderStyle = { width: '30%', fontSize: '10px', fontWeight: 'bold', color: '#603828', padding: '5px', textAlign: 'center' };
+// AJUSTE EXACTO A TU IMAGEN: 75% Intención / 25% Obs.
+const leftHeaderStyle = { width: '75%', fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center', borderRight: '1px solid #C49E65' };
+const rightHeaderStyle = { width: '25%', fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center' };
 
 const tableRowStyle = {
   height: '28px',
@@ -469,42 +539,42 @@ const tableRowStyle = {
 };
 
 const leftCellStyle = {
-  width: '70%',
+  width: '75%',
   borderRight: '1px solid #C49E65',
   padding: 0
 };
 
 const rightCellStyle = {
-  width: '30%',
+  width: '25%',
   padding: 0
 };
 
-// ESTILOS DE LA TABLA DE CONTROL DE SOLICITUDES
+// ESTILOS CONTROL SOLICITUDES
 const thControl = {
   border: '1px solid #C49E65',
-  padding: '6px 4px',
-  fontSize: '9px',
+  padding: '3px 2px',
+  fontSize: '8px',
   fontWeight: 'bold',
   backgroundColor: '#603828',
   color: '#FFFFFF',
   textAlign: 'center',
-  verticalAlign: 'middle'
+  verticalAlign: 'middle',
+  lineHeight: '1.1'
 };
 
 const tdControl = {
   border: '1px solid #C49E65',
-  padding: '4px',
-  fontSize: '10px',
-  height: '28px',
+  padding: '2px',
+  fontSize: '8px',
   backgroundColor: '#FFFDF9',
   verticalAlign: 'middle'
 };
 
 const checkBoxSimulate = {
-  width: '14px',
-  height: '14px',
+  width: '11px',
+  height: '11px',
   border: '1px solid #C49E65',
   margin: '0 auto',
   backgroundColor: '#FFFFFF',
-  borderRadius: '3px'
+  borderRadius: '2px'
 };
