@@ -293,11 +293,37 @@ export default function VistaImpresion({ certType, formData, onBack }) {
       </div>
 
       <style>{`
-        @page { size: letter; margin: 0mm !important; }
+        @page { 
+          size: letter portrait; 
+          margin: 0 !important; 
+        }
         @media print {
-          html, body { background: #ffffff !important; margin: 0 !important; padding: 0 !important; height: 100%; overflow: hidden; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          .no-print { display: none !important; }
-          .print-area { border: none !important; box-shadow: none !important; background: #ffffff !important; margin: 0 auto !important; position: relative !important; page-break-inside: avoid !important; page-break-after: avoid !important; }
+          html, body { 
+            width: 21.59cm !important;
+            height: 27.94cm !important;
+            margin: 0 !important; 
+            padding: 0 !important; 
+            overflow: hidden !important; 
+            background: #ffffff !important;
+            -webkit-print-color-adjust: exact !important; 
+            print-color-adjust: exact !important; 
+          }
+          .no-print { 
+            display: none !important; 
+          }
+          .print-area { 
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important; 
+            box-shadow: none !important; 
+            background: #ffffff !important; 
+            margin: 0 !important; 
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            page-break-inside: avoid !important; 
+            page-break-after: avoid !important; 
+          }
         }
       `}</style>
     </div>

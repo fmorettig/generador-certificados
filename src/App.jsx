@@ -37,7 +37,7 @@ export default function App() {
       espesaNombre: '', esposaEdad: '', esposaEstadoCivil: 'Soltera', esposaNaturalDe: '', esposaVecinaDe: '', esposaPadre: '', esposaMadre: '',
       padrino: '', madrina: '', ministro: '',
       civilActa: '', civilFecha: '', civilMunicipio: '', civilEstado: '',
-      tecnicoMun: '', tecnicoAnio: new Date().getFullYear().toString()
+      tecnicoMun: '', tecnicoAnio: ''
     });
     setScreen('form');
   };

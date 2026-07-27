@@ -16,12 +16,58 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
     URL.revokeObjectURL(url);
   };
 
+  // Helper puro para calcular la edad exacta
+  const calcularEdad = (fechaNacStr, fechaSacramStr) => {
+    if (!fechaNacStr || !fechaSacramStr) return '';
+    const nac = new Date(fechaNacStr);
+    const sac = new Date(fechaSacramStr);
+    
+    let edad = sac.getFullYear() - nac.getFullYear();
+    const mesDiff = sac.getMonth() - nac.getMonth();
+    
+    if (mesDiff < 0 || (mesDiff === 0 && sac.getDate() < nac.getDate())) {
+      edad--;
+    }
+    
+    if (isNaN(edad) || edad < 0) return '';
+    return `${edad} años`;
+  };
+
+  // Manejador específico para la Fecha de Nacimiento (Solo en Confirmaciones)
+  const handleFechaNacimientoChange = (e) => {
+    onChange(e); // Guarda bautizadoFechaNac
+
+    if (formData.fechaSacramento) {
+      const edadCalculada = calcularEdad(e.target.value, formData.fechaSacramento);
+      onChange({
+        target: {
+          name: 'bautizadoEdad',
+          value: edadCalculada
+        }
+      });
+    }
+  };
+
+  // Manejador específico para la Fecha del Sacramento (Solo recalcula edad si es confirmación)
+  const handleFechaSacramentoChange = (e) => {
+    onChange(e); // Guarda fechaSacramento sin tocar tecnicoAnio
+
+    if (certType === 'confirmacion' && formData.bautizadoFechaNac) {
+      const edadCalculada = calcularEdad(formData.bautizadoFechaNac, e.target.value);
+      onChange({
+        target: {
+          name: 'bautizadoEdad',
+          value: edadCalculada
+        }
+      });
+    }
+  };
+
   const esMatrimonio = certType === 'matrimonio';
   const esBautizo = certType === 'bautizo';
   const esComunion = certType === 'comunion';
   const esConfirmacion = certType === 'confirmacion';
   
-  // Condicional para saber si el sacramento requiere papeleo civil
   const requiereRegistroCivil = esBautizo || esMatrimonio;
 
   const obtenerTituloSacramento = () => {
@@ -83,22 +129,35 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
             </div>
           </>
         ) : (
-          /* SECCIÓN PARA BAUTIZO, COMUNIÓN O CONFIRMACIÓN */
+          /* SECCIÓN PARA BAUTIZO, COMUNIÓN Y CONFIRMACIÓN */
           <div style={gridSection}>
             <h3 style={sectionTitle}>
               {esComunion ? "DATOS DE QUIEN RECIBE LA COMUNIÓN" : esConfirmacion ? "DATOS DEL CONFIRMANDO" : "DATOS DEL BAUTIZADO / TITULAR"}
             </h3>
             <Input label="Nombre completo" name="bautizadoNombre" value={formData.bautizadoNombre || ''} onChange={onChange} />
+            
             <div style={row}>
-              {esBautizo ? (
+              {esBautizo && (
                 <>
                   <Input label="Lugar de Nacimiento (Ciudad, Estado)" name="bautizadoLugarNac" value={formData.bautizadoLugarNac || ''} onChange={onChange} />
                   <Input label="Fecha de Nacimiento" type="date" name="bautizadoFechaNac" value={formData.bautizadoFechaNac || ''} onChange={onChange} />
                 </>
-              ) : (
-                <Input label="Edad (Ej: 15 años)" name="bautizadoEdad" value={formData.bautizadoEdad || ''} onChange={onChange} />
+              )}
+
+              {esComunion && (
+                <Input label="Edad (Ej: 10 años)" name="bautizadoEdad" value={formData.bautizadoEdad || ''} onChange={onChange} />
+              )}
+
+              {/* SOLO PARA CONFIRMACIÓN */}
+              {esConfirmacion && (
+                <>
+                  <Input label="Lugar de Nacimiento (Ciudad, Estado)" name="bautizadoLugarNac" value={formData.bautizadoLugarNac || ''} onChange={onChange} />
+                  <Input label="Fecha de Nacimiento" type="date" name="bautizadoFechaNac" value={formData.bautizadoFechaNac || ''} onChange={handleFechaNacimientoChange} />
+                  <Input label="Edad al celebrar" name="bautizadoEdad" value={formData.bautizadoEdad || ''} onChange={onChange} placeholder="Autocalculado" />
+                </>
               )}
             </div>
+
             <div style={row}>
               <Input label="Hijo de (Padre)" name="esposoPadre" value={formData.esposoPadre || ''} onChange={onChange} />
               <Input label="Y de (Madre)" name="esposoMadre" value={formData.esposoMadre || ''} onChange={onChange} />
@@ -115,7 +174,7 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
               type="date" 
               name="fechaSacramento" 
               value={formData.fechaSacramento || ''} 
-              onChange={onChange} 
+              onChange={handleFechaSacramentoChange} 
             />
             <Input label="Ministro (Quien ejerció)" name="ministro" value={formData.ministro || ''} onChange={onChange} />
           </div>
@@ -132,13 +191,12 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
         <div style={gridSection}>
           <h3 style={sectionTitle}>COLUMNA TÉCNICA (ARCHIVOS)</h3>
           <div style={row}>
-            <Input label="Libro" name="libro" value={formData.libro || ''} onChange={onChange} />
-            <Input label="Folio" name="folio" value={formData.folio || ''} onChange={onChange} />
-            <Input label="Num." name="tecnicoMun" value={formData.tecnicoMun || ''} onChange={onChange} />
-            <Input label="Año" name="tecnicoAnio" value={formData.tecnicoAnio || ''} onChange={onChange} />
+            <Input label="Libro" name="libro" value={formData.libro || ''} onChange={onChange} placeholder="Ej: 005" />
+            <Input label="Folio" name="folio" value={formData.folio || ''} onChange={onChange} placeholder="Ej: 012" />
+            <Input label="Num." name="tecnicoMun" value={formData.tecnicoMun || ''} onChange={onChange} placeholder="Ej: 034" />
+            <Input label="Año" name="tecnicoAnio" value={formData.tecnicoAnio || ''} onChange={onChange} placeholder="AAAA" />
           </div>
           
-          {/* SECCIÓN CIVIL VISIBLE COMPLETA: Solo para Bautizos y Matrimonios */}
           {requiereRegistroCivil && (
             <>
               <div style={row}>
