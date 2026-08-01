@@ -285,10 +285,8 @@ export default function VistaImpresion({ certType, formData, onBack }) {
           </div>
         </div>
 
-        {/* NOTA ADVERTENCIA LEGAL */}
-        <div style={{ position: 'absolute', bottom: '0.6cm', left: '1.5cm', right: '1.5cm', fontSize: '9px', borderTop: '1px solid #e0e0e0', paddingTop: '5px', textAlign: 'justify', lineHeight: '1.25' }}>
-          <b>NOTA:</b> Si este certificado va a ser utilizado fuera de la Arquidiócesis debe ser autenticado en la Cancillería de la Curia Arquidiocesana.
-        </div>
+        
+
 
       </div>
 
