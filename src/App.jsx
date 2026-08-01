@@ -40,23 +40,83 @@ export default function App() {
     }
   }, []);
 
-  // Inicializar un formulario con ID único
+  // Inicializar un formulario con la nueva estructura de campos
   const initForm = (type) => {
     setCertType(type);
     const fechaHoy = new Date().toISOString().split('T')[0];
     
     setFormData({
-      id: Date.now().toString(), // ID Único para evitar duplicados
-      nombres: '', bautizadoNombre: '', bautizadoLugarNac: '', bautizadoFechaNac: '', bautizadoEdad: '',
-      fechaSacramento: '', celebrante: '', ministro: '', libro: '', folio: '', partida: '', observaciones: '',
+      id: Date.now().toString(), // ID Único
+      
+      // Número de Expediente Numérico Puro y Tipo de Sacramento
+      numeroExpediente: '',
+      tipoSacramento: type,
+
+      // Libros Eclesiales e Información Adicional
+      libro: '',
+      folio: '',
+      fechaSacramento: '',
       lugarSacramento: 'Parroquia Sta. Teresita del Niño Jesús',
+      ministroTitulo: 'Presbítero',
+      ministroNombre: '',
+      
+      // Padrinos (hasta 4)
+      padrino1: '',
+      padrino2: '',
+      padrino3: '',
+      padrino4: '',
+
+      // Edad al recibir el sacramento
+      edadAlSacramento: '',
+
+      observaciones: '',
+
+      // Expediente Civil Base
+      civilRegistro: '',
+      civilFechaPresentacion: '',
+      civilNumActa: '',
+      civilNumFolio: '',
+      civilCertificadoNacimiento: '',
+      civilMunicipio: '',
+      civilEstado: '',
+
+      // Datos de la Persona (Bautismo / Comunión / Confirmación)
+      personaNombres: '',
+      personaApellidos: '',
+      personaFechaNac: '',
+      personaLugarNac: '',
+      padreNombre: '',
+      madreNombre: '',
+
+      // Matrimonio - Esposo
+      esposoNombres: '',
+      esposoApellidos: '',
+      esposoFechaNac: '',
+      esposoLugarNac: '',
+      esposoPadre: '',
+      esposoMadre: '',
+      esposoCivilRegistro: '',
+      esposoCivilActa: '',
+
+      // Matrimonio - Esposa
+      esposaNombres: '',
+      esposaApellidos: '',
+      esposaFechaNac: '',
+      esposaLugarNac: '',
+      esposaPadre: '',
+      esposaMadre: '',
+      esposaCivilRegistro: '',
+      esposaCivilActa: '',
+
+      // Matrimonio - Testigos
+      testigo1: '',
+      testigo2: '',
+
+      // Expedición / Certificado
       motivo: '',
       fechaExpedicion: fechaHoy,
-      esposoNombre: '', esposoEdad: '', esposoEstadoCivil: 'Soltero', esposoNaturalDe: '', esposoVecinoDe: '', esposoPadre: '', esposoMadre: '',
-      esposaNombre: '', esposaEdad: '', esposaEstadoCivil: 'Soltera', esposaNaturalDe: '', esposaVecinaDe: '', esposaPadre: '', esposaMadre: '',
-      padrino: '', madrina: '',
-      civilActa: '', civilFecha: '', civilMunicipio: '', civilEstado: '',
-      tecnicoMun: '', tecnicoAnio: ''
+      tecnicoMun: '',
+      tecnicoAnio: ''
     });
     setScreen('form');
   };
@@ -80,10 +140,8 @@ export default function App() {
       let nuevoHistorial = [...prev];
 
       if (existeIndex >= 0) {
-        // Reemplaza el registro previo si ya existía
         nuevoHistorial[existeIndex] = itemGuardar;
       } else {
-        // Inserta como nuevo si no existía
         nuevoHistorial.unshift(itemGuardar);
       }
 
@@ -212,7 +270,7 @@ export default function App() {
                 <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredFormatos ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
               </button>
 
-              {/* NUEVO BOTÓN: HISTORIAL DE CERTIFICADOS GUARDADOS */}
+              {/* BOTÓN: HISTORIAL DE CERTIFICADOS GUARDADOS */}
               <button 
                 onClick={() => setScreen('historial')}
                 onMouseEnter={() => setHoveredHistorial(true)}
@@ -244,7 +302,7 @@ export default function App() {
             onChange={handleInputChange} 
             onBack={() => setScreen('home')} 
             onPreview={() => {
-              guardarEnHistorial(formData, certType); // Guarda/Actualiza al ir a Vista Previa
+              guardarEnHistorial(formData, certType);
               setScreen('preview');
             }} 
           />
@@ -256,7 +314,7 @@ export default function App() {
             formData={formData} 
             onBack={() => setScreen('form')} 
             onPrint={() => {
-              guardarEnHistorial(formData, certType); // Guarda/Actualiza al dar clic en Imprimir
+              guardarEnHistorial(formData, certType);
               window.print();
             }}
           />
@@ -281,14 +339,13 @@ export default function App() {
         )}
       </main>
 
-      {/* FOOTER PREMIUM CON FIRMA CORREGIDA Y DISEÑO GLASSMORPHISM */}
+      {/* FOOTER PREMIUM */}
       <div className="no-print" style={{ backgroundColor: COLORS.brown, padding: '24px 40px', color: 'rgba(255,255,255,0.70)', fontSize: '12px', borderTop: `1px solid rgba(196, 158, 101, 0.25)`, width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
           <div>
             <b style={{ color: '#FFF' }}>Herramienta de Digitalización de Certificados Parroquiales</b> — Parroquia Santa Teresita
           </div>
           
-          {/* Contenedor Interactivo de tu Firma Estilizada */}
           <div 
             onMouseEnter={() => setHoveredFooterLogo(true)}
             onMouseLeave={() => setHoveredFooterLogo(false)}
@@ -329,7 +386,7 @@ export default function App() {
                 letterSpacing: '0.8px',
                 fontSize: '12px'
               }}>
-                
+                MTI
               </span>
             </div>
           </div>
