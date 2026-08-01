@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   BookOpen, ArrowLeft, Plus, Search, ChevronRight, 
-  Save, CheckCircle2, ShieldAlert, User, Award, Cross, PlusCircle, Lock
+  Save, CheckCircle2, ShieldAlert, User, Award, Cross, PlusCircle, Lock, Printer
 } from 'lucide-react';
 
 const COLORS = {
@@ -52,7 +52,7 @@ const INITIAL_JSON_STRUCTURE = {
   }
 };
 
-export default function Digitalizacion({ onVolver }) {
+export default function Digitalizacion({ onVolver, onVerImpresion }) {
   const [expedientes, setExpedientes] = useState([]);
   const [modo, setModo] = useState('lista'); // 'lista' | 'tipeo' | 'ficha'
   const [paso, setPaso] = useState(1);
@@ -100,6 +100,61 @@ export default function Digitalizacion({ onVolver }) {
   const guardarEnAlmacen = (nuevosExpedientes) => {
     setExpedientes(nuevosExpedientes);
     localStorage.setItem('expedientes_bautismos_db', JSON.stringify(nuevosExpedientes));
+  };
+
+  // --- ADAPTADOR DE DATOS HACIA VISTAIMPRESION.JSX ---
+  const handlePrepararImpresion = (tipo, sacramentoData) => {
+    if (!onVerImpresion) {
+      alert("⚠️ La función 'onVerImpresion' no fue proporcionada por el componente padre.");
+      return;
+    }
+
+    const pers = expedienteSeleccionado.persona || {};
+    const civ = expedienteSeleccionado.datos_civiles || {};
+
+    // Mapear el objeto formData en el formato plano que requiere VistaImpresion
+    const formData = {
+      // Datos del Registro Eclesiástico
+      libro: sacramentoData.libro || '',
+      folio: sacramentoData.folio || '',
+      numero: sacramentoData.numero_acta || '',
+      anio: sacramentoData.fecha_sacramento ? sacramentoData.fecha_sacramento.split('-')[0] : '',
+      fechaSacramento: sacramentoData.fecha_sacramento || '',
+
+      // Personales
+      bautizadoNombres: pers.nombre_completo || '',
+      bautizadoApellidos: '',
+      lugarNacimiento: pers.lugar_nacimiento ? `${pers.lugar_nacimiento.ciudad || ''}, ${pers.lugar_nacimiento.estado || ''}`.trim() : '',
+      fechaNacimiento: pers.fecha_nacimiento || '',
+      
+      // Padres
+      padreNombre: pers.padre?.nombre_completo || '',
+      madreNombre: pers.madre?.nombre_completo || '',
+
+      // Padrinos y Ministro
+      padrino: sacramentoData.padrinos?.[0] || '',
+      madrina: sacramentoData.padrinos?.[1] || sacramentoData.padrinos?.slice(1).join(', ') || '',
+      ministro: sacramentoData.ministro ? `${sacramentoData.ministro.titulo} ${sacramentoData.ministro.nombre_completo}`.trim() : '',
+
+      // Datos Civiles
+      actaCivil: civ.numero_acta || '',
+      fechaCivil: civ.fecha_presentacion || '',
+      registroCivil: civ.registro_civil || '',
+      municipioCivil: civ.numero_certificado_nacimiento || '',
+      estadoCivilRegistro: civ.folio ? `Folio: ${civ.folio}` : '',
+
+      // Datos de Matrimonio (Si aplica)
+      esposoNombres: tipo === 'matrimonio' ? pers.nombre_completo : '',
+      esposaNombres: tipo === 'matrimonio' ? (sacramentoData.esposo_a || '') : '',
+      
+      // Fieles de Expedición
+      lugarExpedicion: 'Barquisimeto',
+      fechaExpedicion: new Date().toISOString().split('T')[0],
+      motivo: 'Documentación Oficial'
+    };
+
+    // Llamar a la vista de impresión con certType y formData
+    onVerImpresion(tipo, formData);
   };
 
   // --- MANEJADORES FORMULARIO TIPEO ---
@@ -247,7 +302,6 @@ export default function Digitalizacion({ onVolver }) {
       return;
     }
 
-    // Validar campos del nuevo sacramento
     if (!nuevoSacramento.registrado_en_parroquia && !nuevoSacramento.parroquia_externa.trim()) {
       alert('Por favor especifique la Parroquia Externa.'); return;
     }
@@ -276,7 +330,6 @@ export default function Digitalizacion({ onVolver }) {
       sacramentoFormateado.esposo_a = nuevoSacramento.esposo_a;
     }
 
-    // Actualizar objeto en estado y localStorage
     const expedienteActualizado = {
       ...expedienteSeleccionado,
       sacramentos: {
@@ -292,7 +345,6 @@ export default function Digitalizacion({ onVolver }) {
     guardarEnAlmacen(listaActualizada);
     setExpedienteSeleccionado(expedienteActualizado);
 
-    // Limpiar formulario interno
     setSacramentoTipo('');
     setNuevoSacramento({
       registrado_en_parroquia: true,
@@ -648,35 +700,50 @@ export default function Digitalizacion({ onVolver }) {
           {/* LISTADO Y TARJETAS DE SACRAMENTOS */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '30px' }}>
             {Object.entries({
-              bautismo: 'Bautismo',
-              primera_comunion: 'Primera Comunión',
-              confirmacion: 'Confirmación',
-              matrimonio: 'Matrimonio',
-              defuncion: 'Defunción'
-            }).map(([key, label]) => {
+              bautismo: { label: 'Bautismo', certType: 'bautizo' },
+              primera_comunion: { label: 'Primera Comunión', certType: 'comunion' },
+              confirmacion: { label: 'Confirmación', certType: 'confirmacion' },
+              matrimonio: { label: 'Matrimonio', certType: 'matrimonio' },
+              defuncion: { label: 'Defunción', certType: 'defuncion' }
+            }).map(([key, item]) => {
               const sac = expedienteSeleccionado.sacramentos[key];
               return (
-                <div key={key} style={{ backgroundColor: sac ? '#FFF' : COLORS.hoverBg, padding: '16px', borderRadius: '8px', border: `1px solid ${sac ? COLORS.gold : COLORS.border}`, opacity: sac ? 1 : 0.6 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <b style={{ color: COLORS.brown, fontSize: '14px' }}>{label}</b>
+                <div key={key} style={{ backgroundColor: sac ? '#FFF' : COLORS.hoverBg, padding: '16px', borderRadius: '8px', border: `1px solid ${sac ? COLORS.gold : COLORS.border}`, opacity: sac ? 1 : 0.6, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <b style={{ color: COLORS.brown, fontSize: '14px' }}>{item.label}</b>
+                      {sac ? (
+                        <span style={{ fontSize: '11px', color: '#2e7d32', backgroundColor: '#e8f5e9', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>Registrado</span>
+                      ) : (
+                        <span style={{ fontSize: '11px', color: COLORS.textLight, fontStyle: 'italic' }}>Sin Registro</span>
+                      )}
+                    </div>
+
                     {sac ? (
-                      <span style={{ fontSize: '11px', color: '#2e7d32', backgroundColor: '#e8f5e9', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>Registrado</span>
+                      <div style={{ fontSize: '12px', color: '#333' }}>
+                        <div><b>Lugar:</b> {sac.registrado_en_parroquia ? 'Parroquia Sta. Teresita' : sac.parroquia_externa}</div>
+                        <div><b>Fecha:</b> {sac.fecha_sacramento}</div>
+                        <div><b>Libro:</b> {sac.libro} | <b>Folio:</b> {sac.folio} | <b>Acta:</b> {sac.numero_acta}</div>
+                        <div><b>Ministro:</b> {sac.ministro?.titulo} {sac.ministro?.nombre_completo}</div>
+                        {sac.esposo_a && <div><b>Cónyuge:</b> {sac.esposo_a}</div>}
+                        {sac.padrinos?.length > 0 && <div><b>Padrinos:</b> {sac.padrinos.join(', ')}</div>}
+                      </div>
                     ) : (
-                      <span style={{ fontSize: '11px', color: COLORS.textLight, fontStyle: 'italic' }}>Sin Registro</span>
+                      <p style={{ fontSize: '12px', color: COLORS.textLight, margin: 0 }}>No hay partida registrada para este sacramento.</p>
                     )}
                   </div>
 
-                  {sac ? (
-                    <div style={{ fontSize: '12px', color: '#333' }}>
-                      <div><b>Lugar:</b> {sac.registrado_en_parroquia ? 'Parroquia Sta. Teresita' : sac.parroquia_externa}</div>
-                      <div><b>Fecha:</b> {sac.fecha_sacramento}</div>
-                      <div><b>Libro:</b> {sac.libro} | <b>Folio:</b> {sac.folio} | <b>Acta:</b> {sac.numero_acta}</div>
-                      <div><b>Ministro:</b> {sac.ministro?.titulo} {sac.ministro?.nombre_completo}</div>
-                      {sac.esposo_a && <div><b>Cónyuge:</b> {sac.esposo_a}</div>}
-                      {sac.padrinos?.length > 0 && <div><b>Padrinos:</b> {sac.padrinos.join(', ')}</div>}
+                  {/* BOTÓN IMPRIMIR CERTIFICADO */}
+                  {sac && (
+                    <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: `1px dashed ${COLORS.border}`, textAlign: 'right' }}>
+                      <button
+                        type="button"
+                        onClick={() => handlePrepararImpresion(item.certType, sac)}
+                        style={{ backgroundColor: COLORS.brown, color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                      >
+                        <Printer size={14} color={COLORS.gold} /> Imprimir Certificado
+                      </button>
                     </div>
-                  ) : (
-                    <p style={{ fontSize: '12px', color: COLORS.textLight, margin: 0 }}>No hay partida registrada para este sacramento.</p>
                   )}
                 </div>
               );

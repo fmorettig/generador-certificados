@@ -21,6 +21,7 @@ export default function App() {
   const [certType, setCertType] = useState(''); 
   const [formData, setFormData] = useState({});
   const [historial, setHistorial] = useState([]);
+  const [formDataImpresion, setFormDataImpresion] = useState(null);
 
   const [hoveredCard, setHoveredCard] = useState(null);
   const [hoveredHistorial, setHoveredHistorial] = useState(false);
@@ -172,6 +173,12 @@ export default function App() {
     }
   };
 
+  const handleVerImpresion = (tipo, data) => {
+    setCertType(tipo);
+    setFormDataImpresion(data);
+    setScreen('preview');
+  };
+
   return (
     <div style={{ backgroundColor: COLORS.cream, minHeight: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', fontFamily: "'Inter', sans-serif", margin: 0, overflowX: 'hidden' }}>
       
@@ -311,10 +318,10 @@ export default function App() {
         {screen === 'preview' && (
           <VistaImpresion 
             certType={certType} 
-            formData={formData} 
-            onBack={() => setScreen('form')} 
+            formData={formDataImpresion || formData} 
+            onBack={() => setScreen(formDataImpresion ? 'digitalizacion' : 'form')} 
             onPrint={() => {
-              guardarEnHistorial(formData, certType);
+              guardarEnHistorial(formDataImpresion || formData, certType);
               window.print();
             }}
           />
@@ -335,7 +342,10 @@ export default function App() {
         )}
 
         {screen === 'digitalizacion' && (
-          <Digitalizacion onVolver={() => setScreen('home')} />
+          <Digitalizacion 
+            onVolver={() => setScreen('home')} 
+            onVerImpresion={handleVerImpresion}
+          />
         )}
       </main>
 
