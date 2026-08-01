@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Award, Heart, CheckCircle, ChevronRight, CalendarDays, History } from 'lucide-react';
+import { FileText, Award, Heart, CheckCircle, ChevronRight, CalendarDays, History, BookOpen } from 'lucide-react';
 import Formulario from './components/Formulario';
 import VistaImpresion from './components/VistaImpresion';
 import Formatos from './components/Formatos';
 import Historial from './components/Historial';
+import Digitalizacion from './components/Digitalizacion';
 
 const COLORS = {
   brown: '#603828',
@@ -24,6 +25,7 @@ export default function App() {
   const [hoveredCard, setHoveredCard] = useState(null);
   const [hoveredHistorial, setHoveredHistorial] = useState(false);
   const [hoveredFormatos, setHoveredFormatos] = useState(false);
+  const [hoveredDigitalizacion, setHoveredDigitalizacion] = useState(false);
   const [hoveredFooterLogo, setHoveredFooterLogo] = useState(false);
 
   // Cargar historial desde localStorage al montar la app
@@ -168,6 +170,27 @@ export default function App() {
             {/* ENLACES Y BOTONES OPERATIVOS INFERIORES */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               
+              {/* BOTÓN: DIGITALIZACIÓN DE LIBROS */}
+              <button 
+                onClick={() => setScreen('digitalizacion')}
+                onMouseEnter={() => setHoveredDigitalizacion(true)}
+                onMouseLeave={() => setHoveredDigitalizacion(false)}
+                style={getDraftButtonStyle(hoveredDigitalizacion)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+                  <BookOpen size={24} color={COLORS.gold} strokeWidth={1.3} />
+                  <div style={{ textAlign: 'left' }}>
+                    <span style={{ display: 'block', fontSize: '14px', fontWeight: 'bold', color: COLORS.brown, marginBottom: '2px' }}>
+                      DIGITALIZACIÓN DE LIBROS PARROQUIALES
+                    </span>
+                    <span style={{ fontSize: '12px', color: COLORS.textLight }}>
+                      Carga progresiva de libros físicos de bautismos, matrimonios y expedientes civiles
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredDigitalizacion ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
+              </button>
+
               {/* BOTÓN: FORMATOS E INTENCIONES DIARIAS */}
               <button 
                 onClick={() => setScreen('formatos')}
@@ -251,6 +274,10 @@ export default function App() {
             onVaciar={handleVaciarHistorial}
             onVolver={() => setScreen('home')}
           />
+        )}
+
+        {screen === 'digitalizacion' && (
+          <Digitalizacion onVolver={() => setScreen('home')} />
         )}
       </main>
 
@@ -349,7 +376,7 @@ const getDraftButtonStyle = (isHovered) => ({
   padding: '22px 28px',
   display: 'flex',
   alignItems: 'center',
-  justify: 'space-between',
+  justifyContent: 'space-between',
   cursor: 'pointer',
   boxShadow: isHovered ? '0 4px 12px rgba(96, 56, 40, 0.05)' : 'none',
   transition: 'all 0.2s ease',
