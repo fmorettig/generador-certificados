@@ -7,7 +7,7 @@ export default function Formatos({ onBack }) {
   const [selectedFormat, setSelectedFormat] = useState('intenciones');
   const [showConfig, setShowConfig] = useState(false);
   const [numControl, setNumControl] = useState('');
-  
+
   // Configuración de Horarios
   const [horarios, setHorarios] = useState({
     Lunes: [{ hora: '6:00 PM', activo: true }],
@@ -23,10 +23,14 @@ export default function Formatos({ onBack }) {
     ]
   });
 
-  // Estado del Calendario
-  const [currentYear, setCurrentYear] = useState(2026);
-  const [currentMonth, setCurrentMonth] = useState(6); // Julio
-  const [selectedDays, setSelectedDays] = useState([]); 
+  // Obtener la fecha actual dinámica del sistema
+  const hoyReal = new Date();
+  const hoyStr = `${hoyReal.getFullYear()}-${String(hoyReal.getMonth() + 1).padStart(2, '0')}-${String(hoyReal.getDate()).padStart(2, '0')}`;
+
+  // Estado del Calendario (Inicializa dinámicamente en el año y mes actual)
+  const [currentYear, setCurrentYear] = useState(hoyReal.getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(hoyReal.getMonth());
+  const [selectedDays, setSelectedDays] = useState([]);
 
   const nombresMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const diasSemana = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
@@ -54,7 +58,7 @@ export default function Formatos({ onBack }) {
   };
 
   const seleccionarProximaSemana = () => {
-    const hoy = new Date(2026, 6, 18); 
+    const hoy = new Date();
     const proximos = [];
     for (let i = 0; i < 7; i++) {
       const sig = new Date(hoy);
@@ -107,10 +111,10 @@ export default function Formatos({ onBack }) {
 
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      
+
       {activeTab === 'menu' && (
         <div style={{ backgroundColor: COLORS.white, width: '100%', maxWidth: '900px', borderRadius: '12px', border: `1px solid ${COLORS.border}`, padding: '35px 40px', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
-          
+
           {/* Encabezado */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderBottom: `1px solid ${COLORS.cream}`, paddingBottom: '15px' }}>
             <button onClick={onBack} style={{ background: 'none', border: 'none', color: COLORS.brown, fontWeight: 'bold', cursor: 'pointer' }}>← INICIO</button>
@@ -178,18 +182,19 @@ export default function Formatos({ onBack }) {
                     if (!dateObj) return <div key={idx} />;
                     const str = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
                     const isSelected = selectedDays.includes(str);
+                    const isToday = str === hoyStr; // Compara dinámicamente si es hoy
+
                     return (
                       <div key={idx} onClick={() => toggleDaySelection(str)} style={{
                         padding: '10px 0', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold',
                         backgroundColor: isSelected ? COLORS.brown : COLORS.cream,
                         color: isSelected ? '#fff' : COLORS.brown,
-                        border: str === '2026-07-18' ? '2px solid ' + COLORS.gold : 'none'
+                        border: isToday ? '2px solid ' + COLORS.gold : 'none'
                       }}>
                         {dateObj.getDate()}
                       </div>
                     );
-                  })}
-                </div>
+                  })}                </div>
               </div>
 
               <div style={{ flex: 0.8, backgroundColor: COLORS.cream, padding: '20px', borderRadius: '8px', border: `1px solid ${COLORS.border}`, display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -197,13 +202,13 @@ export default function Formatos({ onBack }) {
                 <button onClick={seleccionarProximaSemana} style={btnSecundario}>Seleccionar próxima semana</button>
                 <button onClick={seleccionarTodoElMes} style={btnSecundario}>Seleccionar todo el mes</button>
                 <button onClick={() => setSelectedDays([])} style={{ ...btnSecundario, color: '#d32f2f' }}>Limpiar selección</button>
-                
+
                 <div style={{ borderTop: `1px solid ${COLORS.border}`, marginTop: '10px', paddingTop: '15px' }}>
                   <div style={{ fontSize: '12px', marginBottom: '10px', color: COLORS.text }}>
                     Días marcados: <b>{selectedDays.length} días</b> <br />
                     Hojas totales a imprimir: <b>{paginasAIprimir.length} páginas</b>
                   </div>
-                  <button 
+                  <button
                     disabled={selectedDays.length === 0}
                     onClick={() => setActiveTab('print-intenciones')}
                     style={{ ...btnPrincipal, opacity: selectedDays.length === 0 ? 0.5 : 1, cursor: selectedDays.length === 0 ? 'not-allowed' : 'pointer' }}
@@ -219,11 +224,11 @@ export default function Formatos({ onBack }) {
               <p style={{ fontSize: '13px', color: '#666', maxWidth: '520px', margin: '0 auto 15px auto' }}>
                 Este formato genera una planilla limpia optimizada para el despacho, con las 11 columnas exactas y espacio para N° de Control.
               </p>
-              
+
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 'bold', color: COLORS.brown }}>N° Control (opcional):</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Ej: 001"
                   value={numControl}
                   onChange={(e) => setNumControl(e.target.value)}
@@ -253,7 +258,7 @@ export default function Formatos({ onBack }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', width: '100%', maxWidth: '800px' }}>
             {paginasAIprimir.map((pag, index) => (
               <div key={index} className="print-page sheet-intenciones" style={sheetContainer}>
-                
+
                 {/* Membrete Oficial */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #603828', paddingBottom: '2px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -276,66 +281,66 @@ export default function Formatos({ onBack }) {
 
                 {/* Tablas Estructuradas en Paralelo */}
                 <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
-                  
-{/* SECCIÓN 1: DIFUNTOS */}
-<div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-  <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', backgroundColor: '#FFFDF9', border: '1px solid #C49E65' }}>
-    {/* COLGROUP GARANTIZA EL ANCHO EXACTO DE 75% Y 25% */}
-    <colgroup>
-      <col style={{ width: '75%' }} />
-      <col style={{ width: '25%' }} />
-    </colgroup>
-    <thead>
-      <tr>
-        <th colSpan="2" style={{ backgroundColor: '#603828', color: '#fff', fontSize: '13px', fontWeight: 'bold', padding: '6px 4px', textAlign: 'center', letterSpacing: '1px' }}>
-          DIFUNTOS
-        </th>
-      </tr>
-      <tr style={{ borderBottom: '1px solid #C49E65', backgroundColor: '#FAF6F0' }}>
-        <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center', borderRight: '1px solid #C49E65' }}>INTENCION</th>
-        <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center' }}>OBSERVACIONES</th>
-      </tr>
-    </thead>
-    <tbody>
-      {filasDeTabla.map((_, rIdx) => (
-        <tr key={rIdx} style={{ height: '28px', borderBottom: '1px solid #C49E65' }}>
-          <td style={{ borderRight: '1px solid #C49E65', padding: 0 }}></td>
-          <td style={{ padding: 0 }}></td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
 
-{/* SECCIÓN 2: ACCIÓN DE GRACIAS */}
-<div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-  <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', backgroundColor: '#FFFDF9', border: '1px solid #C49E65' }}>
-    {/* COLGROUP GARANTIZA EL ANCHO EXACTO DE 75% Y 25% */}
-    <colgroup>
-      <col style={{ width: '75%' }} />
-      <col style={{ width: '25%' }} />
-    </colgroup>
-    <thead>
-      <tr>
-        <th colSpan="2" style={{ backgroundColor: '#603828', color: '#fff', fontSize: '13px', fontWeight: 'bold', padding: '6px 4px', textAlign: 'center', letterSpacing: '1px' }}>
-          ACCIÓN DE GRACIAS
-        </th>
-      </tr>
-      <tr style={{ borderBottom: '1px solid #C49E65', backgroundColor: '#FAF6F0' }}>
-        <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center', borderRight: '1px solid #C49E65' }}>INTENCION</th>
-        <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center' }}>OBSERVACIONES</th>
-      </tr>
-    </thead>
-    <tbody>
-      {filasDeTabla.map((_, rIdx) => (
-        <tr key={rIdx} style={{ height: '28px', borderBottom: '1px solid #C49E65' }}>
-          <td style={{ borderRight: '1px solid #C49E65', padding: 0 }}></td>
-          <td style={{ padding: 0 }}></td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+                  {/* SECCIÓN 1: DIFUNTOS */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', backgroundColor: '#FFFDF9', border: '1px solid #C49E65' }}>
+                      {/* COLGROUP GARANTIZA EL ANCHO EXACTO DE 75% Y 25% */}
+                      <colgroup>
+                        <col style={{ width: '75%' }} />
+                        <col style={{ width: '25%' }} />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th colSpan="2" style={{ backgroundColor: '#603828', color: '#fff', fontSize: '13px', fontWeight: 'bold', padding: '6px 4px', textAlign: 'center', letterSpacing: '1px' }}>
+                            DIFUNTOS
+                          </th>
+                        </tr>
+                        <tr style={{ borderBottom: '1px solid #C49E65', backgroundColor: '#FAF6F0' }}>
+                          <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center', borderRight: '1px solid #C49E65' }}>INTENCION</th>
+                          <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center' }}>OBSERVACIONES</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filasDeTabla.map((_, rIdx) => (
+                          <tr key={rIdx} style={{ height: '28px', borderBottom: '1px solid #C49E65' }}>
+                            <td style={{ borderRight: '1px solid #C49E65', padding: 0 }}></td>
+                            <td style={{ padding: 0 }}></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* SECCIÓN 2: ACCIÓN DE GRACIAS */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', backgroundColor: '#FFFDF9', border: '1px solid #C49E65' }}>
+                      {/* COLGROUP GARANTIZA EL ANCHO EXACTO DE 75% Y 25% */}
+                      <colgroup>
+                        <col style={{ width: '75%' }} />
+                        <col style={{ width: '25%' }} />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th colSpan="2" style={{ backgroundColor: '#603828', color: '#fff', fontSize: '13px', fontWeight: 'bold', padding: '6px 4px', textAlign: 'center', letterSpacing: '1px' }}>
+                            ACCIÓN DE GRACIAS
+                          </th>
+                        </tr>
+                        <tr style={{ borderBottom: '1px solid #C49E65', backgroundColor: '#FAF6F0' }}>
+                          <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center', borderRight: '1px solid #C49E65' }}>INTENCION</th>
+                          <th style={{ fontSize: '9px', fontWeight: 'bold', color: '#603828', padding: '3px', textAlign: 'center' }}>OBSERVACIONES</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filasDeTabla.map((_, rIdx) => (
+                          <tr key={rIdx} style={{ height: '28px', borderBottom: '1px solid #C49E65' }}>
+                            <td style={{ borderRight: '1px solid #C49E65', padding: 0 }}></td>
+                            <td style={{ padding: 0 }}></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
                 {/* Sección de Cierre: Colecta, Observaciones*/}
@@ -370,9 +375,9 @@ export default function Formatos({ onBack }) {
           </div>
 
           <div className="print-page" style={{ ...sheetContainer, maxWidth: '1000px' }}>
-            
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #603828', paddingBottom: '6px', marginBottom: '6px' }}>
-              
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '33%' }}>
                 <img src="/stateresita.png" style={{ height: '50px', width: 'auto' }} alt="Logo" />
                 <div>
@@ -490,17 +495,17 @@ const btnPrincipal = { backgroundColor: '#603828', color: 'white', border: 'none
 const btnSecundario = { backgroundColor: '#fff', color: '#603828', border: '1px solid #E6DFD5', padding: '10px 15px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' };
 
 // Contenedor de Hojas
-const sheetContainer = { 
-  width: '100%', 
-  backgroundColor: '#FFFFFF', 
-  border: '1px solid #E6DFD5', 
-  padding: '10px 18px', 
-  boxSizing: 'border-box', 
-  position: 'relative', 
-  display: 'flex', 
-  flexDirection: 'column', 
-  justifyContent: 'space-between', 
-  boxShadow: '0 4px 15px rgba(0,0,0,0.05)' 
+const sheetContainer = {
+  width: '100%',
+  backgroundColor: '#FFFFFF',
+  border: '1px solid #E6DFD5',
+  padding: '10px 18px',
+  boxSizing: 'border-box',
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
 };
 
 // ESTILOS DE LA TABLA INTENCIONES
@@ -514,14 +519,14 @@ const tableStyle = {
   tableLayout: 'fixed'
 };
 
-const tableHeaderBrown = { 
-  backgroundColor: '#603828', 
-  color: '#fff', 
-  fontSize: '13px', 
-  fontWeight: 'bold', 
-  padding: '6px 4px', 
-  textAlign: 'center', 
-  letterSpacing: '1px' 
+const tableHeaderBrown = {
+  backgroundColor: '#603828',
+  color: '#fff',
+  fontSize: '13px',
+  fontWeight: 'bold',
+  padding: '6px 4px',
+  textAlign: 'center',
+  letterSpacing: '1px'
 };
 
 const subHeaderRowStyle = {
