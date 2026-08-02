@@ -1,0 +1,260 @@
+{
+  "numero_expediente": 3265,
+  "fecha_registro_sistema": "2026-07-31",
+  
+  "persona": {
+    "nombre_completo": "Juan Alberto Pérez Gómez",
+    "fecha_nacimiento": "1963-05-14",
+    "lugar_nacimiento": {
+      "ciudad": "Barquisimeto",
+      "estado": "Lara"
+    },
+    "padre": { "nombre_completo": "Carlos Eduardo Pérez" },
+    "madre": { "nombre_completo": "María Elena Gómez" }
+  },
+
+  "datos_civiles": {
+    "registro_civil": "Registro Civil Parroquia Catedral",
+    "fecha_presentacion": "1963-06-20",
+    "numero_acta": "1234",
+    "numero_certificado_nacimiento": "CN-88901",
+    "folio": "45"
+  },
+
+  "sacramentos": {
+    "bautismo": {
+      "registrado_en_parroquia": true,
+      "libro": "01",
+      "folio": "14",
+      "numero_acta": "45",
+      "fecha_sacramento": "1963-08-12",
+      "ministro": { "titulo": "Pbro.", "nombre_completo": "José Antonio Silva" },
+      "padrinos": ["Pedro Luis Pérez", "Ana Sofía Gómez"]
+    },
+    "primera_comunion": null,
+    "confirmacion": null,
+    "matrimonio": null,
+    "defuncion": null
+  }
+}
+
+"matrimonio": {
+  "registrado_en_parroquia": true,
+  "libro": "01",
+  "folio": "12",
+  "numero_acta": "88",
+  "fecha_sacramento": "1995-10-21",
+  "ministro": {
+    "titulo": "Pbro.",
+    "nombre_completo": "Luis Eduardo Silva"
+  },
+  // Datos del Cónyuge (Esposa/Esposo según el expediente)
+  "conyuge": {
+    "nombre_completo": "Ana María Torres",
+    "lugar_nacimiento": "Caracas, Distrito Capital",
+    "fecha_nacimiento": "1972-03-15",
+    "padre": "Roberto Torres",
+    "madre": "Elena Mendoza",
+    // Sacramentos previos del cónyuge
+    "bautismo_origen": "Parroquia San José - Caracas (Libro 04, Folio 12)",
+    "confirmacion_origen": "Parroquia San José - Caracas"
+  },
+  "testigos": [
+    "Carlos Eduardo Gómez",
+    "Patricia Sofía López"
+  ]
+}
+
+
+
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+2
+
+{
+  "id": "1690000000000",
+  "tipoSacramento": "bautismo", // "bautismo" | "primera_comunion" | "confirmacion" | "matrimonio"
+
+  // 1. UBICACIÓN EN LIBRO ECLESIÁSTICO
+  "libroEclesial": {
+    "libro": "2",
+    "folio": "45",
+    "partida": "102",
+    "anioSacramento": "2023" // Año en que se suministró el sacramento
+  },
+
+  // 2. DATOS DEL SACRAMENTO
+  "datosSacramento": {
+    "fechaSacramento": "2023-05-14",
+    "lugarSacramento": "Parroquia Sta. Teresita del Niño Jesús",
+    "ministro": {
+      "titulo": "Presbítero", // "Presbítero" | "Diácono" | "Monseñor" | "Otro"
+      "nombre": "Juan Pérez"
+    },
+    "observaciones": "Marginales o notas del libro"
+  },
+
+  // 3. DATOS DEL EXPEDIENTE CIVIL (Base tomada del Acta/Certificado de Nacimiento)
+  "expedienteCivil": {
+    "registroCivil": "Registro Civil de Cabudare",
+    "fechaPresentacion": "2020-02-10",
+    "numActa": "452",
+    "numFolio": "12", // Solicitado provisionalmente
+    "numCertificadoNacimiento": "78910",
+    "municipio": "Palavecino",
+    "estado": "Lara"
+  },
+
+  // 4. DATOS DE LA PERSONA (Para Bautismo, Primera Comunión, Confirmación)
+  "persona": {
+    "nombres": "Pedro José",
+    "apellidos": "Pérez Gómez",
+    "fechaNacimiento": "2020-01-15",
+    "lugarNacimiento": {
+      "ciudad": "Barquisimeto",
+      "estado": "Lara"
+    },
+    "edadAlSacramento": "12", // Específico para Confirmación / Comunión
+    "padre": "Carlos Pérez",
+    "madre": "María Gómez",
+    // Lista/Arreglo de Padrinos (soporta de 1 a 4 padrinos sin romper la estructura)
+    "padrinos": [
+      "Luis Rodríguez",
+      "Ana Martínez"
+    ]
+  },
+
+  // 5. DATOS ESPECÍFICOS DE MATRIMONIO (Se usan en lugar de "persona" y "expedienteCivil" simple)
+  "matrimonio": {
+    "esposo": {
+      "nombres": "Carlos Eduardo",
+      "apellidos": "Mendoza Silva",
+      "fechaNacimiento": "1995-03-20",
+      "lugarNacimiento": "Barquisimeto, Lara",
+      "padre": "José Mendoza",
+      "madre": "Elena Silva",
+      "expedienteCivil": {
+        "registroCivil": "Registro Civil Concepción",
+        "numActa": "112",
+        "numCertificadoNacimiento": "3341"
+      }
+    },
+    "esposa": {
+      "nombres": "María Fernanda",
+      "apellidos": "Rojas Torres",
+      "fechaNacimiento": "1997-08-11",
+      "lugarNacimiento": "Cabudare, Lara",
+      "padre": "Fernando Rojas",
+      "madre": "Carmen Torres",
+      "expedienteCivil": {
+        "registroCivil": "Registro Civil Palavecino",
+        "numActa": "884",
+        "numCertificadoNacimiento": "5521"
+      }
+    },
+    "testigos": [
+      "Roberto Gómez",
+      "Patricia Lucena"
+    ]
+  },
+
+  // 6. DATOS DE EMISIÓN DEL CERTIFICADO (Se llena al momento de imprimir)
+  "emisionCertificado": {
+    "motivo": "Requisito Matrimonial",
+    "fechaExpedicion": "2026-07-31",
+    "tecnicoMun": "Lara",
+    "tecnicoAnio": "2026"
+  }
+}
+/*/*/*/*/*/*/*/*/*/*
+3
+
+{
+  "numeroExpediente": "32652", // Numérico puro
+  "tipoSacramento": "bautismo", // "bautismo" | "primera_comunion" | "confirmacion" | "matrimonio"
+
+  // 1. INFORMACIÓN ECLESIAL
+  "libroEclesial": {
+    "libro": "2",
+    "folio": "45",
+    "numeroExpediente": "32652", // Unificado con el expediente civil
+    "fechaSacramento": "2023-05-14",
+    "lugarSacramento": "Parroquia Sta. Teresita del Niño Jesús",
+    "ministro": {
+      "titulo": "Presbítero",
+      "nombre": "Juan Pérez"
+    },
+    "padrinos": [
+      "Luis Rodríguez",
+      "Ana Martínez"
+    ],
+    "observaciones": "Marginales o notas del libro"
+  },
+
+  // 2. EXPEDIENTE CIVIL
+  "expedienteCivil": {
+    "registroCivil": "Registro Civil de Cabudare",
+    "fechaPresentacion": "2020-02-10",
+    "numActa": "452",
+    "numFolio": "12",
+    "numCertificadoNacimiento": "78910",
+    "municipio": "Palavecino",
+    "estado": "Lara"
+  },
+
+  // 3. DATOS DE LA PERSONA (Bautismo / Comunión / Confirmación)
+  "persona": {
+    "nombres": "Pedro José",
+    "apellidos": "Pérez Gómez",
+    "fechaNacimiento": "2020-01-15",
+    "lugarNacimiento": {
+      "ciudad": "Barquisimeto",
+      "estado": "Lara"
+    },
+    "edadAlSacramento": "12",
+    "padre": "Carlos Pérez",
+    "madre": "María Gómez"
+  },
+
+  // 4. DATOS PARA MATRIMONIO
+  "matrimonio": {
+    "esposo": {
+      "nombres": "Carlos Eduardo",
+      "apellidos": "Mendoza Silva",
+      "fechaNacimiento": "1995-03-20",
+      "lugarNacimiento": "Barquisimeto, Lara",
+      "padre": "José Mendoza",
+      "madre": "Elena Silva",
+      "expedienteCivil": {
+        "registroCivil": "Registro Civil Concepción",
+        "numActa": "112",
+        "numCertificadoNacimiento": "3341"
+      }
+    },
+    "esposa": {
+      "nombres": "María Fernanda",
+      "apellidos": "Rojas Torres",
+      "fechaNacimiento": "1997-08-11",
+      "lugarNacimiento": "Cabudare, Lara",
+      "padre": "Fernando Rojas",
+      "madre": "Carmen Torres",
+      "expedienteCivil": {
+        "registroCivil": "Registro Civil Palavecino",
+        "numActa": "884",
+        "numCertificadoNacimiento": "5521"
+      }
+    },
+    "testigos": [
+      "Roberto Gómez",
+      "Patricia Lucena"
+    ]
+  },
+
+  // 5. EMISIÓN DE CERTIFICADO
+  "emisionCertificado": {
+    "motivo": "Requisito Matrimonial",
+    "fechaExpedicion": "2026-07-31",
+    "tecnicoMun": "Lara",
+    "tecnicoAnio": "2026"
+  }
+}
