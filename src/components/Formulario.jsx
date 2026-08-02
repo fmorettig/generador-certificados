@@ -10,7 +10,12 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    const nombre = (formData.esposoNombre || formData.bautizadoNombre || 'Borrador').replace(/\s+/g, '_');
+    const nombre = (
+      formData.esposoNombres || 
+      formData.bautizadoNombres || 
+      'Borrador'
+    ).replace(/\s+/g, '_');
+    
     link.download = `${certType.toUpperCase()}_${nombre}.json`;
     link.click();
     URL.revokeObjectURL(url);
@@ -33,30 +38,32 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
     return `${edad} años`;
   };
 
-  // Manejador específico para la Fecha de Nacimiento (Solo en Confirmaciones)
+  // Manejador específico para la Fecha de Nacimiento (Aplica para Confirmación y Comunión)
   const handleFechaNacimientoChange = (e) => {
-    onChange(e); // Guarda bautizadoFechaNac
+    onChange(e);
 
     if (formData.fechaSacramento) {
       const edadCalculada = calcularEdad(e.target.value, formData.fechaSacramento);
       onChange({
         target: {
-          name: 'bautizadoEdad',
+          name: 'edad',
           value: edadCalculada
         }
       });
     }
   };
 
-  // Manejador específico para la Fecha del Sacramento (Solo recalcula edad si es confirmación)
+  // Manejador específico para la Fecha del Sacramento (Recalcula edad para Confirmación y Comunión)
   const handleFechaSacramentoChange = (e) => {
-    onChange(e); // Guarda fechaSacramento sin tocar tecnicoAnio
+    onChange(e);
 
-    if (certType === 'confirmacion' && formData.bautizadoFechaNac) {
-      const edadCalculada = calcularEdad(formData.bautizadoFechaNac, e.target.value);
+    const aplicaAutocalculo = certType === 'confirmacion' || certType === 'comunion';
+
+    if (aplicaAutocalculo && formData.fechaNacimiento) {
+      const edadCalculada = calcularEdad(formData.fechaNacimiento, e.target.value);
       onChange({
         target: {
-          name: 'bautizadoEdad',
+          name: 'edad',
           value: edadCalculada
         }
       });
@@ -95,7 +102,10 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
             {/* SECCIÓN ESPOSO (SOLO MATRIMONIO) */}
             <div style={gridSection}>
               <h3 style={sectionTitle}>DATOS DEL ESPOSO</h3>
-              <Input label="Nombre completo" name="esposoNombre" value={formData.esposoNombre || ''} onChange={onChange} />
+              <div style={row}>
+                <Input label="Nombres" name="esposoNombres" value={formData.esposoNombres || ''} onChange={onChange} />
+                <Input label="Apellidos" name="esposoApellidos" value={formData.esposoApellidos || ''} onChange={onChange} />
+              </div>
               <div style={row}>
                 <Input label="Estado Civil" name="esposoEstadoCivil" value={formData.esposoEstadoCivil || ''} onChange={onChange} />
                 <Input label="Edad" name="esposoEdad" value={formData.esposoEdad || ''} onChange={onChange} />
@@ -113,7 +123,10 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
             {/* SECCIÓN ESPOSA (SOLO MATRIMONIO) */}
             <div style={gridSection}>
               <h3 style={sectionTitle}>DATOS DE LA ESPOSA</h3>
-              <Input label="Nombre completo" name="esposaNombre" value={formData.esposaNombre || ''} onChange={onChange} />
+              <div style={row}>
+                <Input label="Nombres" name="esposaNombres" value={formData.esposaNombres || ''} onChange={onChange} />
+                <Input label="Apellidos" name="esposaApellidos" value={formData.esposaApellidos || ''} onChange={onChange} />
+              </div>
               <div style={row}>
                 <Input label="Estado Civil" name="esposaEstadoCivil" value={formData.esposaEstadoCivil || ''} onChange={onChange} />
                 <Input label="Edad" name="esposaEdad" value={formData.esposaEdad || ''} onChange={onChange} />
@@ -134,33 +147,32 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
             <h3 style={sectionTitle}>
               {esComunion ? "DATOS DE QUIEN RECIBE LA COMUNIÓN" : esConfirmacion ? "DATOS DEL CONFIRMANDO" : "DATOS DEL BAUTIZADO / TITULAR"}
             </h3>
-            <Input label="Nombre completo" name="bautizadoNombre" value={formData.bautizadoNombre || ''} onChange={onChange} />
+            <div style={row}>
+              <Input label="Nombres" name="bautizadoNombres" value={formData.bautizadoNombres || ''} onChange={onChange} />
+              <Input label="Apellidos" name="bautizadoApellidos" value={formData.bautizadoApellidos || ''} onChange={onChange} />
+            </div>
             
             <div style={row}>
               {esBautizo && (
                 <>
-                  <Input label="Lugar de Nacimiento (Ciudad, Estado)" name="bautizadoLugarNac" value={formData.bautizadoLugarNac || ''} onChange={onChange} />
-                  <Input label="Fecha de Nacimiento" type="date" name="bautizadoFechaNac" value={formData.bautizadoFechaNac || ''} onChange={onChange} />
+                  <Input label="Lugar de Nacimiento (Ciudad, Estado)" name="lugarNacimiento" value={formData.lugarNacimiento || ''} onChange={onChange} />
+                  <Input label="Fecha de Nacimiento" type="date" name="fechaNacimiento" value={formData.fechaNacimiento || ''} onChange={onChange} />
                 </>
               )}
 
-              {esComunion && (
-                <Input label="Edad (Ej: 10 años)" name="bautizadoEdad" value={formData.bautizadoEdad || ''} onChange={onChange} />
-              )}
-
-              {/* SOLO PARA CONFIRMACIÓN */}
-              {esConfirmacion && (
+              {/* SECCIÓN UNIFICADA PARA COMUNIÓN Y CONFIRMACIÓN */}
+              {(esComunion || esConfirmacion) && (
                 <>
-                  <Input label="Lugar de Nacimiento (Ciudad, Estado)" name="bautizadoLugarNac" value={formData.bautizadoLugarNac || ''} onChange={onChange} />
-                  <Input label="Fecha de Nacimiento" type="date" name="bautizadoFechaNac" value={formData.bautizadoFechaNac || ''} onChange={handleFechaNacimientoChange} />
-                  <Input label="Edad al celebrar" name="bautizadoEdad" value={formData.bautizadoEdad || ''} onChange={onChange} placeholder="Autocalculado" />
+                  <Input label="Lugar de Nacimiento (Ciudad, Estado)" name="lugarNacimiento" value={formData.lugarNacimiento || ''} onChange={onChange} />
+                  <Input label="Fecha de Nacimiento" type="date" name="fechaNacimiento" value={formData.fechaNacimiento || ''} onChange={handleFechaNacimientoChange} />
+                  <Input label="Edad al celebrar" name="edad" value={formData.edad || ''} onChange={onChange} placeholder="Autocalculado" />
                 </>
               )}
             </div>
 
             <div style={row}>
-              <Input label="Hijo de (Padre)" name="esposoPadre" value={formData.esposoPadre || ''} onChange={onChange} />
-              <Input label="Y de (Madre)" name="esposoMadre" value={formData.esposoMadre || ''} onChange={onChange} />
+              <Input label="Hijo de (Padre)" name="padreNombre" value={formData.padreNombre || ''} onChange={onChange} />
+              <Input label="Y de (Madre)" name="madreNombre" value={formData.madreNombre || ''} onChange={onChange} />
             </div>
           </div>
         )}
@@ -193,20 +205,20 @@ export default function Formulario({ certType, formData, onChange, onBack, onPre
           <div style={row}>
             <Input label="Libro" name="libro" value={formData.libro || ''} onChange={onChange} placeholder="Ej: 005" />
             <Input label="Folio" name="folio" value={formData.folio || ''} onChange={onChange} placeholder="Ej: 012" />
-            <Input label="Num." name="tecnicoMun" value={formData.tecnicoMun || ''} onChange={onChange} placeholder="Ej: 034" />
-            <Input label="Año" name="tecnicoAnio" value={formData.tecnicoAnio || ''} onChange={onChange} placeholder="AAAA" />
+            <Input label="Num." name="numero" value={formData.numero || ''} onChange={onChange} placeholder="Ej: 034" />
+            <Input label="Año" name="anio" value={formData.anio || ''} onChange={onChange} placeholder="AAAA" />
           </div>
           
           {requiereRegistroCivil && (
             <>
               <div style={row}>
-                <Input label="Inscripción Civil N°" name="civilActa" value={formData.civilActa || ''} onChange={onChange} />
-                <Input label="Fecha Inscripción Civil" type="date" name="civilFecha" value={formData.civilFecha || ''} onChange={onChange} />
-                <Input label={esBautizo ? "Certificado N°" : "Municipio / Prefectura"} name="civilMunicipio" value={formData.civilMunicipio || ''} onChange={onChange} />
+                <Input label="Inscripción Civil N°" name="actaCivil" value={formData.actaCivil || ''} onChange={onChange} />
+                <Input label="Fecha Inscripción Civil" type="date" name="fechaCivil" value={formData.fechaCivil || ''} onChange={onChange} />
+                <Input label={esBautizo ? "Certificado N°" : "Municipio / Prefectura"} name="municipioCivil" value={formData.municipioCivil || ''} onChange={onChange} />
               </div>
               <div style={row}>
-                <Input label="Registro Civil (Nombre de Oficina)" name="civilNombreRegistro" value={formData.civilNombreRegistro || ''} onChange={onChange} placeholder="Ej: Municipio Iribarren o Prefectura..." />
-                <Input label="Estado" name="civilEstado" value={formData.civilEstado || ''} onChange={onChange} />
+                <Input label="Registro Civil (Nombre de Oficina)" name="registroCivil" value={formData.registroCivil || ''} onChange={onChange} placeholder="Ej: Municipio Iribarren o Prefectura..." />
+                <Input label="Estado" name="estadoCivilRegistro" value={formData.estadoCivilRegistro || ''} onChange={onChange} />
               </div>
             </>
           )}

@@ -36,6 +36,12 @@ export default function VistaImpresion({ certType, formData, onBack }) {
     return 'CERTIFICADO DE MATRIMONIO';
   };
 
+  // Helper para concatenar nombres y apellidos limpiando espacios dobles
+  const obtenerNombreCompleto = (nombres = '', apellidos = '') => {
+    const completo = `${nombres} ${apellidos}`.trim();
+    return completo !== '' ? completo.toUpperCase() : '';
+  };
+
   const esMatrimonio = certType === 'matrimonio';
   const esBautizo = certType === 'bautizo';
   const esComunion = certType === 'comunion';
@@ -98,13 +104,13 @@ export default function VistaImpresion({ certType, formData, onBack }) {
               <>
                 contrajeron nupcias, según el rito de la Santa Madre Iglesia, en esta Parroquia, el día: <b>{formatearFecha(formData.fechaSacramento)}</b>.
                 <br />
-                El Sr: <span style={{ fontSize: '12.5px', fontWeight: 'bold', textDecoration: 'underline' }}>{formData.esposoNombre || '________________________________________'}</span>.
+                El Sr: <span style={{ fontSize: '12.5px', fontWeight: 'bold', textDecoration: 'underline' }}>{obtenerNombreCompleto(formData.esposoNombres, formData.esposoApellidos) || '________________________________________'}</span>.
                 <br />
                 de estado civil <b>{formData.esposoEstadoCivil || 'Soltero'}</b>, de <b>{formData.esposoEdad || '___'}</b> años de edad, natural de <b>{formData.esposoNaturalDe || '_______________'}</b> vecino de <b>{formData.esposoVecinoDe || '_______________'}</b>.
                 <br />
                 Hijo de: <b>{formData.esposoPadre || '________________________________________'}</b> y de: <b>{formData.esposoMadre || '________________________________________'}</b>.
                 <br />
-                y la Sra. <span style={{ fontSize: '12.5px', fontWeight: 'bold', textDecoration: 'underline' }}>{formData.esposaNombre || '________________________________________'}</span>.
+                y la Sra. <span style={{ fontSize: '12.5px', fontWeight: 'bold', textDecoration: 'underline' }}>{obtenerNombreCompleto(formData.esposaNombres, formData.esposaApellidos) || '________________________________________'}</span>.
                 <br />
                 de estado civil <b>{formData.esposaEstadoCivil || 'Soltera'}</b>, de <b>{formData.esposaEdad || '___'}</b> años de edad, natural de <b>{formData.esposaNaturalDe || '_______________'}</b> vecina de <b>{formData.esposaVecinaDe || '_______________'}</b>.
                 <br />
@@ -113,53 +119,53 @@ export default function VistaImpresion({ certType, formData, onBack }) {
             ) : esComunion ? (
               <>
                 <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '14px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
-                  {formData.bautizadoNombre ? formData.bautizadoNombre.toUpperCase() : '________________________________________'}
+                  {obtenerNombreCompleto(formData.bautizadoNombres, formData.bautizadoApellidos) || '________________________________________'}
                 </div>
-                De <b>{formData.bautizadoEdad || '___ años'}</b> de edad, recibió el Sacramento de la Eucaristía el día <b>{formatearFecha(formData.fechaSacramento)}</b>.
+                De <b>{formData.edad || '___ años'}</b> de edad, recibió el Sacramento de la Eucaristía el día <b>{formatearFecha(formData.fechaSacramento)}</b>.
                 <br /><br />
                 
                 {/* ALINEACIÓN DE PADRES */}
                 <div style={{ display: 'flex', marginTop: '5px' }}>
                   <span style={{ fontWeight: 'bold', width: '85px', flexShrink: 0 }}>PADRES:</span>
                   <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <b>{formData.esposoPadre || '________________________________________'}</b>
-                    <b>{formData.esposoMadre || '________________________________________'}</b>
+                    <b>{formData.padreNombre || '________________________________________'}</b>
+                    <b>{formData.madreNombre || '________________________________________'}</b>
                   </div>
                 </div>
               </>
             ) : esConfirmacion ? (
               <>
                 <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '14px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
-                  {formData.bautizadoNombre ? formData.bautizadoNombre.toUpperCase() : '________________________________________'}
+                  {obtenerNombreCompleto(formData.bautizadoNombres, formData.bautizadoApellidos) || '________________________________________'}
                 </div>
-                De <b>{formData.bautizadoEdad || '___ años'}</b> de edad, recibió el Sacramento de la Confirmación el día <b>{formatearFecha(formData.fechaSacramento)}</b>.
+                De <b>{formData.edad || '___ años'}</b> de edad, recibió el Sacramento de la Confirmación el día <b>{formatearFecha(formData.fechaSacramento)}</b>.
                 <br /><br />
                 
                 {/* ALINEACIÓN DE PADRES */}
                 <div style={{ display: 'flex', marginTop: '5px' }}>
                   <span style={{ fontWeight: 'bold', width: '85px', flexShrink: 0 }}>PADRES:</span>
                   <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <b>{formData.esposoPadre || '________________________________________'}</b>
-                    <b>{formData.esposoMadre || '________________________________________'}</b>
+                    <b>{formData.padreNombre || '________________________________________'}</b>
+                    <b>{formData.madreNombre || '________________________________________'}</b>
                   </div>
                 </div>
               </>
             ) : (
               <>
                 <div style={{ textAlign: 'center', width: '100%', margin: '10px 0', fontSize: '14px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
-                  {formData.bautizadoNombre ? formData.bautizadoNombre.toUpperCase() : '________________________________________'}
+                  {obtenerNombreCompleto(formData.bautizadoNombres, formData.bautizadoApellidos) || '________________________________________'}
                 </div>
                 Fue bautizado(a) el día: <b>{formatearFecha(formData.fechaSacramento)}</b>.
                 <br />
-                Nació en <b>{formData.bautizadoLugarNac || '____________________'}</b>, el día: <b>{formatearFecha(formData.bautizadoFechaNac)}</b>.
+                Nació en <b>{formData.lugarNacimiento || '____________________'}</b>, el día: <b>{formatearFecha(formData.fechaNacimiento)}</b>.
                 <br /><br />
                 
                 {/* ALINEACIÓN DE PADRES */}
                 <div style={{ display: 'flex', marginTop: '5px' }}>
                   <span style={{ fontWeight: 'bold', width: '85px', flexShrink: 0 }}>PADRES:</span>
                   <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <b>{formData.esposoPadre || '________________________________________'}</b>
-                    <b>{formData.esposoMadre || '________________________________________'}</b>
+                    <b>{formData.padreNombre || '________________________________________'}</b>
+                    <b>{formData.madreNombre || '________________________________________'}</b>
                   </div>
                 </div>
               </>
@@ -206,11 +212,11 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                 </tr>
                 <tr>
                   <td style={{ padding: '4px 6px', borderBottom: '1px solid #000000', borderRight: '1px solid #000000', fontWeight: 'bold' }}>NUM.</td>
-                  <td style={{ padding: '4px 6px', borderBottom: '1px solid #000000', textAlign: 'center', fontWeight: 'bold' }}>{formatearTresDigitos(formData.tecnicoMun)}</td>
+                  <td style={{ padding: '4px 6px', borderBottom: '1px solid #000000', textAlign: 'center', fontWeight: 'bold' }}>{formatearTresDigitos(formData.numero)}</td>
                 </tr>
                 <tr>
                   <td style={{ padding: '4px 6px', borderRight: '1px solid #000000', fontWeight: 'bold' }}>AÑO</td>
-                  <td style={{ padding: '4px 6px', textAlign: 'center', fontWeight: 'bold' }}>{formData.tecnicoAnio || '____'}</td>
+                  <td style={{ padding: '4px 6px', textAlign: 'center', fontWeight: 'bold' }}>{formData.anio || '____'}</td>
                 </tr>
               </tbody>
             </table>
@@ -223,16 +229,16 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                     INSCRIPCION CIVIL
                   </div>
                   <div style={{ padding: '4px 6px', lineHeight: '1.3' }}>
-                    <b>N°:</b> {formData.civilActa || '__________'} <br />
-                    <b>Fecha:</b> {formatearFechaCorta(formData.civilFecha)} <br />
-                    {esBautizo && <b>Certificado:</b>} {esBautizo && (formData.civilMunicipio || '__________')}
+                    <b>N°:</b> {formData.actaCivil || '__________'} <br />
+                    <b>Fecha:</b> {formatearFechaCorta(formData.fechaCivil)} <br />
+                    {esBautizo && <b>Certificado:</b>} {esBautizo && (formData.municipioCivil || '__________')}
                   </div>
                   
                   <div style={{ backgroundColor: '#e6e6e6', borderTop: '1px solid #000000', borderBottom: '1px solid #000000', padding: '4px', fontWeight: 'bold', textAlign: 'center', fontSize: '10.5px', letterSpacing: '0.5px' }}>
                     REGISTRO CIVIL
                   </div>
                   <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
-                    {formData.civilNombreRegistro || ''}
+                    {formData.registroCivil || ''}
                   </div>
                   
                   {esMatrimonio && (
@@ -241,7 +247,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                         MUNICIPIO
                       </div>
                       <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
-                        {formData.civilMunicipio || ''}
+                        {formData.municipioCivil || ''}
                       </div>
                     </>
                   )}
@@ -250,7 +256,7 @@ export default function VistaImpresion({ certType, formData, onBack }) {
                     ESTADO
                   </div>
                   <div style={{ padding: '4px 6px', fontSize: '10.5px' }}>
-                    {formData.civilEstado || ''}
+                    {formData.estadoCivilRegistro || ''}
                   </div>
                 </div>
 
@@ -284,9 +290,6 @@ export default function VistaImpresion({ certType, formData, onBack }) {
             <div style={{ fontSize: '11.5px', marginTop: '1px' }}>Párroco</div>
           </div>
         </div>
-
-        
-
 
       </div>
 

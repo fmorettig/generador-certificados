@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Award, Heart, CheckCircle, ChevronRight, CalendarDays, History } from 'lucide-react';
+import { FileText, Award, Heart, CheckCircle, ChevronRight, CalendarDays, History, BookOpen } from 'lucide-react';
 import Formulario from './components/Formulario';
 import VistaImpresion from './components/VistaImpresion';
 import Formatos from './components/Formatos';
 import Historial from './components/Historial';
+/*import Digitalizacion from './components/Digitalizacion';*/
 
 const COLORS = {
   brown: '#603828',
@@ -24,6 +25,7 @@ export default function App() {
   const [hoveredCard, setHoveredCard] = useState(null);
   const [hoveredHistorial, setHoveredHistorial] = useState(false);
   const [hoveredFormatos, setHoveredFormatos] = useState(false);
+  const [hoveredDigitalizacion, setHoveredDigitalizacion] = useState(false);
   const [hoveredFooterLogo, setHoveredFooterLogo] = useState(false);
 
   // Cargar historial desde localStorage al montar la app
@@ -38,23 +40,83 @@ export default function App() {
     }
   }, []);
 
-  // Inicializar un formulario con ID único
+  // Inicializar un formulario con la nueva estructura de campos
   const initForm = (type) => {
     setCertType(type);
     const fechaHoy = new Date().toISOString().split('T')[0];
     
     setFormData({
-      id: Date.now().toString(), // ID Único para evitar duplicados
-      nombres: '', bautizadoNombre: '', bautizadoLugarNac: '', bautizadoFechaNac: '', bautizadoEdad: '',
-      fechaSacramento: '', celebrante: '', ministro: '', libro: '', folio: '', partida: '', observaciones: '',
+      id: Date.now().toString(), // ID Único
+      
+      // Número de Expediente Numérico Puro y Tipo de Sacramento
+      numeroExpediente: '',
+      tipoSacramento: type,
+
+      // Libros Eclesiales e Información Adicional
+      libro: '',
+      folio: '',
+      fechaSacramento: '',
       lugarSacramento: 'Parroquia Sta. Teresita del Niño Jesús',
+      ministroTitulo: 'Presbítero',
+      ministroNombre: '',
+      
+      // Padrinos (hasta 4)
+      padrino1: '',
+      padrino2: '',
+      padrino3: '',
+      padrino4: '',
+
+      // Edad al recibir el sacramento
+      edadAlSacramento: '',
+
+      observaciones: '',
+
+      // Expediente Civil Base
+      civilRegistro: '',
+      civilFechaPresentacion: '',
+      civilNumActa: '',
+      civilNumFolio: '',
+      civilCertificadoNacimiento: '',
+      civilMunicipio: '',
+      civilEstado: '',
+
+      // Datos de la Persona (Bautismo / Comunión / Confirmación)
+      personaNombres: '',
+      personaApellidos: '',
+      personaFechaNac: '',
+      personaLugarNac: '',
+      padreNombre: '',
+      madreNombre: '',
+
+      // Matrimonio - Esposo
+      esposoNombres: '',
+      esposoApellidos: '',
+      esposoFechaNac: '',
+      esposoLugarNac: '',
+      esposoPadre: '',
+      esposoMadre: '',
+      esposoCivilRegistro: '',
+      esposoCivilActa: '',
+
+      // Matrimonio - Esposa
+      esposaNombres: '',
+      esposaApellidos: '',
+      esposaFechaNac: '',
+      esposaLugarNac: '',
+      esposaPadre: '',
+      esposaMadre: '',
+      esposaCivilRegistro: '',
+      esposaCivilActa: '',
+
+      // Matrimonio - Testigos
+      testigo1: '',
+      testigo2: '',
+
+      // Expedición / Certificado
       motivo: '',
       fechaExpedicion: fechaHoy,
-      esposoNombre: '', esposoEdad: '', esposoEstadoCivil: 'Soltero', esposoNaturalDe: '', esposoVecinoDe: '', esposoPadre: '', esposoMadre: '',
-      esposaNombre: '', esposaEdad: '', esposaEstadoCivil: 'Soltera', esposaNaturalDe: '', esposaVecinaDe: '', esposaPadre: '', esposaMadre: '',
-      padrino: '', madrina: '',
-      civilActa: '', civilFecha: '', civilMunicipio: '', civilEstado: '',
-      tecnicoMun: '', tecnicoAnio: ''
+      tecnicoMun: '',
+      tecnicoAnio: ''
     });
     setScreen('form');
   };
@@ -78,10 +140,8 @@ export default function App() {
       let nuevoHistorial = [...prev];
 
       if (existeIndex >= 0) {
-        // Reemplaza el registro previo si ya existía
         nuevoHistorial[existeIndex] = itemGuardar;
       } else {
-        // Inserta como nuevo si no existía
         nuevoHistorial.unshift(itemGuardar);
       }
 
@@ -168,6 +228,27 @@ export default function App() {
             {/* ENLACES Y BOTONES OPERATIVOS INFERIORES */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               
+              {/* BOTÓN: DIGITALIZACIÓN DE LIBROS */}
+              {/*<button 
+                onClick={() => setScreen('digitalizacion')}
+                onMouseEnter={() => setHoveredDigitalizacion(true)}
+                onMouseLeave={() => setHoveredDigitalizacion(false)}
+                style={getDraftButtonStyle(hoveredDigitalizacion)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+                  <BookOpen size={24} color={COLORS.gold} strokeWidth={1.3} />
+                  <div style={{ textAlign: 'left' }}>
+                    <span style={{ display: 'block', fontSize: '14px', fontWeight: 'bold', color: COLORS.brown, marginBottom: '2px' }}>
+                      DIGITALIZACIÓN DE LIBROS PARROQUIALES
+                    </span>
+                    <span style={{ fontSize: '12px', color: COLORS.textLight }}>
+                      Carga progresiva de libros físicos de bautismos, matrimonios y expedientes civiles
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredDigitalizacion ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
+              </button>*/}
+
               {/* BOTÓN: FORMATOS E INTENCIONES DIARIAS */}
               <button 
                 onClick={() => setScreen('formatos')}
@@ -189,7 +270,7 @@ export default function App() {
                 <ChevronRight size={20} color={COLORS.gold} style={{ transform: hoveredFormatos ? 'translateX(3px)' : 'none', transition: 'transform 0.2s ease' }} />
               </button>
 
-              {/* NUEVO BOTÓN: HISTORIAL DE CERTIFICADOS GUARDADOS */}
+              {/* BOTÓN: HISTORIAL DE CERTIFICADOS GUARDADOS */}
               <button 
                 onClick={() => setScreen('historial')}
                 onMouseEnter={() => setHoveredHistorial(true)}
@@ -221,7 +302,7 @@ export default function App() {
             onChange={handleInputChange} 
             onBack={() => setScreen('home')} 
             onPreview={() => {
-              guardarEnHistorial(formData, certType); // Guarda/Actualiza al ir a Vista Previa
+              guardarEnHistorial(formData, certType);
               setScreen('preview');
             }} 
           />
@@ -233,7 +314,7 @@ export default function App() {
             formData={formData} 
             onBack={() => setScreen('form')} 
             onPrint={() => {
-              guardarEnHistorial(formData, certType); // Guarda/Actualiza al dar clic en Imprimir
+              guardarEnHistorial(formData, certType);
               window.print();
             }}
           />
@@ -252,16 +333,19 @@ export default function App() {
             onVolver={() => setScreen('home')}
           />
         )}
+
+        {screen === 'digitalizacion' && (
+          <Digitalizacion onVolver={() => setScreen('home')} />
+        )}
       </main>
 
-      {/* FOOTER PREMIUM CON FIRMA CORREGIDA Y DISEÑO GLASSMORPHISM */}
+      {/* FOOTER PREMIUM */}
       <div className="no-print" style={{ backgroundColor: COLORS.brown, padding: '24px 40px', color: 'rgba(255,255,255,0.70)', fontSize: '12px', borderTop: `1px solid rgba(196, 158, 101, 0.25)`, width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
           <div>
             <b style={{ color: '#FFF' }}>Herramienta de Digitalización de Certificados Parroquiales</b> — Parroquia Santa Teresita
           </div>
           
-          {/* Contenedor Interactivo de tu Firma Estilizada */}
           <div 
             onMouseEnter={() => setHoveredFooterLogo(true)}
             onMouseLeave={() => setHoveredFooterLogo(false)}
@@ -302,7 +386,7 @@ export default function App() {
                 letterSpacing: '0.8px',
                 fontSize: '12px'
               }}>
-                
+                MTI
               </span>
             </div>
           </div>
@@ -349,7 +433,7 @@ const getDraftButtonStyle = (isHovered) => ({
   padding: '22px 28px',
   display: 'flex',
   alignItems: 'center',
-  justify: 'space-between',
+  justifyContent: 'space-between',
   cursor: 'pointer',
   boxShadow: isHovered ? '0 4px 12px rgba(96, 56, 40, 0.05)' : 'none',
   transition: 'all 0.2s ease',
